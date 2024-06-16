@@ -1,0 +1,50 @@
+{
+    "alpha_numeric": {
+        "pattern": "[a-zA-Z]{5,15}",
+        "description": "Alphanumeric string of length 5 to 15"
+    },
+    "url": {
+        "pattern": "https?://[a-zA-Z0-9.-]+(?:/[\\w\\-.?%&=]*)?",
+        "description": "URL starting with http or https"
+    },
+    "email": {
+        "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}",
+        "description": "Email address"
+    },
+    "phone_number": {
+        "pattern": "\\d{3}-\\d{3}-\\d{4}",
+        "description": "Phone number in format XXX-XXX-XXXX"
+    },
+    "ipv4_address": {
+        "pattern": "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b",
+        "description": "IPv4 address"
+    },
+    "folder_hierarchy": {
+        "pattern": "[^/]+(/[^/]+){2,}",
+        "description": "Folder hierarchy with at least two slashes"
+    },
+    "password": {
+        "pattern": "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[#?!@$ %^&*-]).{8,}$",
+        "description": "Password with at least one upper, lower, digit, special character and 8 characters long"
+    },
+    "username_discord": {
+        "pattern": "^.{3,32}#[0-9]{4}$",
+        "description": "Discord username in format username#1234"
+    },
+    "mac_address": {
+        "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
+        "description": "MAC address"
+    },
+    "whitespace_leading": {
+        "pattern": "^\\s+",
+        "description": "Leading whitespace"
+    },
+    "whitespace_trailing": {
+        "pattern": "\\s+$",
+        "description": "Trailing whitespace"
+    },
+    "whitespace_consecutive": {
+        "pattern": "\\s{2,}",
+        "description": "Consecutive whitespace"
+    }
+}
