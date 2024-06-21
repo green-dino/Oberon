@@ -2,9 +2,19 @@ import os
 import sqlite3
 import streamlit as st
 import pandas as pd
+import logging 
 
-# Function to get data from the selected database
+# Configure logging
+logging.basicConfig(filename='titania.log', level=logging.ERROR, format='%(asctime)s - %(message)s')
+
+# Function to get data from the selected database# Function to get data from the selected database
 def get_data(query, db_path):
+    allowed_keywords = {'select', 'from', 'where', 'and', 'or', 'order by', 'group by', 'limit'}
+    words = query.split()
+    if not all(word.strip().lower() in allowed_keywords for word in words):
+        st.error("Invalid query syntax. Only SELECT statements are supported.")
+        return pd.DataFrame()
+
     try:
         conn = sqlite3.connect(db_path)
         df = pd.read_sql_query(query, conn)
@@ -12,13 +22,15 @@ def get_data(query, db_path):
         return df
     except sqlite3.Error as e:
         st.error(f"SQLite error: {e}")
+        logging.error(f"SQLite error in query '{query}': {e}")
         return pd.DataFrame()
     except Exception as e:
         st.error(f"Error: {e}")
+        logging.error(f"Error in query '{query}': {e}")
         return pd.DataFrame()
-
+    
 # Function to display the database content
-def display_data(db_path, table_name):
+def display_data(db_path, table_name, page_size=10):
     st.title("Database Viewer")
     
     query = f"SELECT * FROM {table_name}"
@@ -28,9 +40,30 @@ def display_data(db_path, table_name):
         st.warning("No data available in the database.")
     else:
         st.write("Data from the database:")
-        st.dataframe(df)
+        if 'start_index' not in st.session_state:
+            st.session_state.start_index = 0
+        if 'page_size' not in st.session_state:
+            st.session_state.page_size = page_size
+        
+        paged_df = df.iloc[st.session_state.start_index:st.session_state.start_index + st.session_state.page_size]
+        st.dataframe(paged_df)
+        
+        if len(df) > st.session_state.page_size:
+            if st.button("Next Page"):
+                st.session_state.start_index += st.session_state.page_size
+            if st.button("Previous Page"):
+                st.session_state.start_index -= st.session_state.page_size
+                if st.session_state.start_index < 0:
+                    st.session_state.start_index = 0
 
-# Function to search for available .db files
+            if st.button("Next Page"):
+                st.session_state.start_index += st.session_state.page_size
+            if st.button("Previous Page"):
+                st.session_state.start_index -= st.session_state.page_size
+                if st.session_state.start_index < 0:
+                    st.session_state.start_index = 0
+
+# Function to search for available.db files
 def find_databases(directory):
     try:
         return [f for f in os.listdir(directory) if f.endswith('.db')]
@@ -47,22 +80,15 @@ def find_databases(directory):
 def main():
     st.sidebar.title("Navigation")
 
-    # Search for .db files in the current directory (where app.py is located)
     databases = find_databases('.')
     
     if not databases:
         st.sidebar.warning("No database files found.")
         return
 
-    # Present available databases to the user
     db_choice = st.sidebar.selectbox("Select Database", databases)
-
-    # Full path to the selected database
     db_path = os.path.join('.', db_choice)
-
-    # Provide a text input for the table name
     table_name = st.sidebar.text_input("Table Name", "users")
-
     options = ["View Data", "Run Custom Query"]
     choice = st.sidebar.selectbox("Select an option", options)
 
@@ -72,12 +98,15 @@ def main():
         st.title("Run Custom Query")
         query = st.text_area("Enter SQL query", height=100)
         if st.button("Execute"):
-            df = get_data(query, db_path)
-            if df.empty:
-                st.warning("No data returned from the query.")
+            if query.strip().startswith("select"):
+                df = get_data(query, db_path)
+                if not df.empty:
+                    st.write("Query result:")
+                    st.dataframe(df)
+                else:
+                    st.warning("No data returned from the query.")
             else:
-                st.write("Query result:")
-                st.dataframe(df)
+                st.error("Invalid query syntax. Please enter a valid SELECT statement.")
 
 if __name__ == "__main__":
     main()

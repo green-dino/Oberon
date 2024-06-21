@@ -1,0 +1,3 @@
+2024-06-21 15:22:09,931 - Error inserting data into users: Error binding parameter 1: type 'dict' is not supported
+2024-06-21 15:23:21,707 - Error inserting data into users: Error binding parameter 1: type 'dict' is not supported
+2024-06-21 15:25:55,886 - Error inserting data into users: Error binding parameter 1: type 'dict' is not supported
