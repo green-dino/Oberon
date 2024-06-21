@@ -3,7 +3,6 @@ import sqlite3
 import os
 import logging
 
-# Configure logging
 logging.basicConfig(filename='app.log', level=logging.ERROR, format='%(asctime)s - %(message)s')
 
 class JSONReader:
@@ -61,7 +60,7 @@ class SQLiteManager:
     def flatten_dict(d):
         def expand(key, value):
             if isinstance(value, dict):
-                return [ (f'{key}.{k}', v) for k, v in SQLiteManager.flatten_dict(value).items() ]
+                return [(f'{key}.{k}', v) for k, v in SQLiteManager.flatten_dict(value).items()]
             else:
                 return [(key, value)]
 

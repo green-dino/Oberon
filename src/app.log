@@ -1,3 +1,12 @@
 2024-06-21 15:22:09,931 - Error inserting data into users: Error binding parameter 1: type 'dict' is not supported
 2024-06-21 15:23:21,707 - Error inserting data into users: Error binding parameter 1: type 'dict' is not supported
 2024-06-21 15:25:55,886 - Error inserting data into users: Error binding parameter 1: type 'dict' is not supported
+2024-06-21 16:08:29,155 - Error processing JSON to DB: table users has no column named relationship_types
+2024-06-21 16:09:33,814 - Error processing JSON to DB: table users has no column named dest_doc_identifier
+2024-06-21 16:10:19,612 - Error processing JSON to DB: table users has no column named website
+2024-06-21 16:10:22,580 - Error processing JSON to DB: table users has no column named version
+2024-06-21 16:10:23,468 - Error processing JSON to DB: table users has no column named doc_identifier
+2024-06-21 16:12:32,771 - Error processing JSON to DB: table users has no column named version
+2024-06-21 16:14:15,377 - Error processing JSON to DB: table users has no column named relationship_types
+2024-06-21 16:28:59,116 - Error processing JSON to DB: table users has no column named documents
+2024-06-21 16:29:15,925 - Error processing JSON to DB: table users has no column named description
