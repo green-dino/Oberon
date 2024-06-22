@@ -1,159 +1,113 @@
-import os
-import sqlite3
 import streamlit as st
+import json
 import pandas as pd
-import logging
+import matplotlib.pyplot as plt
 
-# Configure logging
-logging.basicConfig(filename='titania.log', level=logging.ERROR, format='%(asctime)s - %(message)s')
-
-# Function to get data from SQLite database or JSON file
-def fetch_data_from_file(file_path):
-    _, file_extension = os.path.splitext(file_path)
-    if file_extension == '.db':
-        # It's an SQLite database
-        try:
-            conn = sqlite3.connect(file_path)
-            cursor = conn.cursor()
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-            tables = cursor.fetchall()
-            conn.close()
-            return [table[0] for table in tables]
-        except sqlite3.Error as e:
-            st.error(f"SQLite error: {e}")
-            logging.error(f"SQLite error fetching table names: {e}")
-            return []
-        except Exception as e:
-            st.error(f"Error: {e}")
-            logging.error(f"Error fetching table names: {e}")
-            return []
-    elif file_extension == '.json':
-        # It's a JSON file
-        try:
-            df = pd.read_json(file_path)
-            return df.columns.tolist()  # Assuming each JSON file represents a single table-like structure
-        except Exception as e:
-            st.error(f"Error reading JSON file: {e}")
-            logging.error(f"Error reading JSON file: {e}")
-            return []
-    else:
-        st.error("Unsupported file format. Only .db (SQLite) and .json files are supported.")
-        return []
-
-# Function to search for available .db and .json files
-def find_data_files(directory):
-    try:
-        return [f for f in os.listdir(directory) if f.endswith(('.db', '.json'))]
-    except FileNotFoundError:
-        st.error(f"Directory '{directory}' not found.")
-        return []
-    except PermissionError:
-        st.error(f"Permission denied to access directory '{directory}'.")
-        return []
-    except Exception as e:
-        st.error(f"Error accessing directory '{directory}': {e}")
-        return []
-
-# Function to display data from SQLite database or JSON file
-def display_data(file_path, table_name, page_size=10):
-    _, file_extension = os.path.splitext(file_path)
-    
-    if file_extension == '.db':
-        # It's an SQLite database
-        query = f"SELECT * FROM {table_name}"
-        df = get_data(query, file_path)
-    elif file_extension == '.json':
-        # It's a JSON file
-        try:
-            df = pd.read_json(file_path)
-        except Exception as e:
-            st.error(f"Error reading JSON file: {e}")
-            logging.error(f"Error reading JSON file: {e}")
-            df = pd.DataFrame()
-    else:
-        st.error("Unsupported file format. Only .db (SQLite) and .json files are supported.")
-        df = pd.DataFrame()
-
-    if df.empty:
-        st.warning("No data available in the selected table or file.")
-    else:
-        st.write("Data:")
-        
-        if 'start_index' not in st.session_state:
-            st.session_state.start_index = 0
-        if 'page_size' not in st.session_state:
-            st.session_state.page_size = page_size
-        
-        start_index = st.session_state.start_index
-        end_index = start_index + st.session_state.page_size
-        paged_df = df.iloc[start_index:end_index]
-        st.dataframe(paged_df)
-        
-        # Pagination controls
-        col1, col2, col3 = st.columns([1, 1, 2])
-        with col1:
-            if st.button("Previous Page"):
-                st.session_state.start_index = max(0, start_index - st.session_state.page_size)
-        with col2:
-            if st.button("Next Page"):
-                st.session_state.start_index = start_index + st.session_state.page_size
-        with col3:
-            st.write(f"Showing rows {start_index + 1} to {min(end_index, len(df))} of {len(df)}")
-
-# Function to get data from SQLite database
-def get_data(query, db_path):
-    try:
-        conn = sqlite3.connect(db_path)
-        df = pd.read_sql_query(query, conn)
-        conn.close()
-        return df
-    except sqlite3.Error as e:
-        st.error(f"SQLite error: {e}")
-        logging.error(f"SQLite error in query '{query}': {e}")
-        return pd.DataFrame()
-    except Exception as e:
-        st.error(f"Error: {e}")
-        logging.error(f"Error in query '{query}': {e}")
-        return pd.DataFrame()
-
-def main():
-    st.sidebar.title("Navigation")
-
-    data_files = find_data_files('.')
-    
-    if not data_files:
-        st.sidebar.warning("No database or JSON files found.")
-        return
-
-    data_choice = st.sidebar.selectbox("Select Data File", data_files)
-    data_path = os.path.join('.', data_choice)
-    
-    # Fetching table or structure names from the selected file
-    data_names = fetch_data_from_file(data_path)
-    if not data_names:
-        st.sidebar.warning("No tables or data structures found in the selected file.")
-        return
-
-    data_name = st.sidebar.selectbox("Select Table or Structure", data_names)
-    
-    options = ["View Data", "Run Custom Query"]
-    choice = st.sidebar.selectbox("Select an option", options)
-
-    if choice == "View Data":
-        display_data(data_path, data_name)
-    elif choice == "Run Custom Query":
-        st.title("Run Custom Query")
-        query = st.text_area("Enter SQL query", height=100)
-        if st.button("Execute"):
-            if query.strip().startswith("select"):
-                df = get_data(query, data_path)
-                if not df.empty:
-                    st.write("Query result:")
-                    st.dataframe(df)
-                else:
-                    st.warning("No data returned from the query.")
+# Function to recursively display JSON structure
+def display_json_structure(json_data, parent_key=''):
+    if isinstance(json_data, dict):
+        for key, value in json_data.items():
+            full_key = f"{parent_key}.{key}" if parent_key else key
+            if isinstance(value, (dict, list)):
+                st.write(f"**{full_key}**")
+                display_json_structure(value, full_key)
             else:
-                st.error("Invalid query syntax. Please enter a valid SELECT statement.")
+                st.write(f"{full_key}: {value}")
+    elif isinstance(json_data, list):
+        for index, item in enumerate(json_data):
+            full_key = f"{parent_key}[{index}]"
+            if isinstance(item, (dict, list)):
+                st.write(f"**{full_key}**")
+                display_json_structure(item, full_key)
+            else:
+                st.write(f"{full_key}: {item}")
+
+# Function to filter JSON data
+def filter_json_data(json_data, filter_key='', filter_value=''):
+    filtered_data = []
+    if isinstance(json_data, dict):
+        filtered_data.extend([{'key': key, 'value': value} for key, value in json_data.items()
+                              if filter_key.lower() in str(key).lower() or filter_value.lower() in str(value).lower()])
+        for value in json_data.values():
+            if isinstance(value, (dict, list)):
+                filtered_data.extend(filter_json_data(value, filter_key, filter_value))
+    elif isinstance(json_data, list):
+        for item in json_data:
+            if isinstance(item, (dict, list)):
+                filtered_data.extend(filter_json_data(item, filter_key, filter_value))
+    return filtered_data
+
+# Function to visualize data using matplotlib
+def visualize_data(json_data):
+    if isinstance(json_data, dict):
+        keys = list(json_data.keys())
+        values = list(json_data.values())
+        if all(isinstance(v, (int, float)) for v in values):
+            plt.bar(keys, values)
+            plt.xlabel('Keys')
+            plt.ylabel('Values')
+            st.pyplot()
+        elif all(isinstance(v, str) for v in values):
+            plt.pie(values, labels=keys, autopct='%1.1f%%')
+            st.pyplot()
+        else:
+            st.write("Visualization not supported for this data type.")
+    elif isinstance(json_data, list):
+        st.write("Visualization not supported for list type data.")
+
+# Main function
+def main():
+    st.title("JSON File Explorer")
+    
+    file_option = st.sidebar.selectbox(
+        "Select how to load your JSON file:",
+        ("Upload", "Local File")
+    )
+
+    if file_option == "Upload":
+        uploaded_file = st.file_uploader("Upload a JSON file", type="json")
+        if uploaded_file is not None:
+            try:
+                json_content = json.load(uploaded_file)
+                search_term = st.sidebar.text_input("Search term:", "")
+                filter_key = st.sidebar.text_input("Filter by key:", "")
+                filter_value = st.sidebar.text_input("Filter by value:", "")
+
+                if search_term or filter_key or filter_value:
+                    st.subheader("Filtered Contents of the JSON file:")
+                    filtered_data = filter_json_data(json_content, filter_key, filter_value)
+                    if filtered_data:
+                        for item in filtered_data:
+                            display_json_structure(item['value'])
+                            st.subheader("Data Visualization:")
+                            visualize_data(item['value'])
+                    else:
+                        st.write("No matching data found.")
+                else:
+                    st.subheader("Contents of the JSON file:")
+                    st.json(json_content)
+                    st.subheader("Structure of the JSON file:")
+                    display_json_structure(json_content)
+                    st.subheader("Data Visualization:")
+                    visualize_data(json_content)
+            except json.JSONDecodeError:
+                st.error("The uploaded file is not a valid JSON file.")
+    elif file_option == "Local File":
+        local_file_path = st.sidebar.text_input("Enter path to your local JSON file:", "")
+        if st.sidebar.button("Load"):
+            try:
+                with open(local_file_path, 'r') as file:
+                    json_content = json.load(file)
+                    st.subheader("Contents of the JSON file:")
+                    st.json(json_content)
+                    st.subheader("Structure of the JSON file:")
+                    display_json_structure(json_content)
+                    st.subheader("Data Visualization:")
+                    visualize_data(json_content)
+            except FileNotFoundError:
+                st.error(f"File not found at path: {local_file_path}")
+            except json.JSONDecodeError:
+                st.error("The file at the specified path is not a valid JSON file.")
 
 if __name__ == "__main__":
     main()
