@@ -17,21 +17,25 @@ class JSONReader:
         return data
 
     @staticmethod
-    def get_all_keys(entries, depth=0, max_depth=10):
+    def get_all_keys(entries, seen=None, depth=0, max_depth=10):
+        if seen is None:
+            seen = set()
+        
         all_keys = set()
         
         for entry in entries:
-            if isinstance(entry, dict):
-                if depth < max_depth:
+            if id(entry) not in seen and depth < max_depth:
+                seen.add(id(entry))
+                
+                if isinstance(entry, dict):
                     for key, value in entry.items():
                         all_keys.add(key)
                         if isinstance(value, (dict, list)):
-                            all_keys.update(JSONReader.get_all_keys([value], depth + 1, max_depth))
-            elif isinstance(entry, list):
-                if depth < max_depth:
+                            all_keys.update(JSONReader.get_all_keys([value], seen, depth + 1, max_depth))
+                elif isinstance(entry, list):
                     for item in entry:
                         if isinstance(item, (dict, list)):
-                            all_keys.update(JSONReader.get_all_keys([item], depth + 1, max_depth))
+                            all_keys.update(JSONReader.get_all_keys([item], seen, depth + 1, max_depth))
         
         return all_keys
 
@@ -48,18 +52,15 @@ class SQLiteManager:
         self.connection.close()
 
     def sanitize_column_name(self, column_name):
-        # Sanitize and quote column name to handle special characters
         return '"' + column_name.replace('"', '""') + '"'
 
     def create_table(self, table_name, columns):
         existing_columns = self.get_existing_columns(table_name)
         if not existing_columns:
-            # Table does not exist, create it
             columns_def = ', '.join(self.sanitize_column_name(col) + ' TEXT' for col in columns)
             create_table_query = f'CREATE TABLE {table_name} ({columns_def})'
             self.cursor.execute(create_table_query)
         else:
-            # Table exists, add missing columns
             new_columns = [col for col in columns if col not in existing_columns]
             if new_columns:
                 for col in new_columns:
@@ -82,18 +83,20 @@ class SQLiteManager:
         insert_query = f'INSERT INTO {table_name} ({keys}) VALUES ({question_marks})'
 
         for entry in entries:
-            if isinstance(entry, dict):
-                flattened_entry = self.flatten_dict(entry)
-                values = tuple(flattened_entry.get(key, None) for key in all_keys)
-                self.cursor.execute(insert_query, values)
+            flattened_entry = self._flatten_dict_recursive(entry)
+            values = tuple(flattened_entry.get(key, None) for key in all_keys)
+            # Replace None values with the proper representation for SQLite
+            values = tuple(None if v is None else (v,) for v in values)
+            self.cursor.execute(insert_query, values)
 
         self.connection.commit()
 
-    @staticmethod
-    def flatten_dict(d):
+    def _flatten_dict_recursive(self, d):
         def expand(key, value):
             if isinstance(value, dict):
-                return [(f'{key}.{k}', v) for k, v in SQLiteManager.flatten_dict(value).items()]
+                return [(f'{key}.{k}', v) for k, v in self._flatten_dict_recursive(value).items()]
+            elif isinstance(value, list):
+                return [(f'{key}.index.{i}', v) for i, v in enumerate(value)]
             else:
                 return [(key, value)] if value is not None else []
 

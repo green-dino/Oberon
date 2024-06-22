@@ -27,3 +27,5 @@
 2024-06-21 17:06:09,918 - Error processing JSON to DB: no such table: users
 2024-06-21 17:10:07,746 - Error processing JSON to DB: no such table: users
 2024-06-21 20:53:30,532 - Error processing JSON to DB: no such table: users
+2024-06-21 21:02:05,707 - Error processing JSON to DB: type object 'JSONReader' has no attribute 'flatten_dict'
+2024-06-21 21:09:36,799 - Error processing JSON to DB: Incorrect number of bindings supplied. The current statement uses 21, and there are 10013 supplied.
