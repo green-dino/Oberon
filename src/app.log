@@ -10,3 +10,20 @@
 2024-06-21 16:14:15,377 - Error processing JSON to DB: table users has no column named relationship_types
 2024-06-21 16:28:59,116 - Error processing JSON to DB: table users has no column named documents
 2024-06-21 16:29:15,925 - Error processing JSON to DB: table users has no column named description
+2024-06-21 16:50:22,066 - Error processing JSON to DB: table users has no column named requestType
+2024-06-21 16:51:30,202 - Error processing JSON to DB: table users has no column named relationship_types
+2024-06-21 16:52:49,409 - Error processing JSON to DB: near ",": syntax error
+2024-06-21 16:53:20,604 - Error processing JSON to DB: near ",": syntax error
+2024-06-21 16:55:34,114 - Error processing JSON to DB: near ",": syntax error
+2024-06-21 16:58:05,052 - Error processing JSON to DB: 'NoneType' object has no attribute 'get'
+2024-06-21 17:00:21,504 - Error processing JSON to DB: 'NoneType' object has no attribute 'get'
+2024-06-21 17:00:48,983 - Error processing JSON to DB: 'NoneType' object has no attribute 'get'
+2024-06-21 17:01:33,353 - Error processing JSON to DB: table users has no column named provenance_doc_identifier
+2024-06-21 17:02:21,401 - Error processing JSON to DB: near ",": syntax error
+2024-06-21 17:03:01,554 - Error processing JSON to DB: near ",": syntax error
+2024-06-21 17:04:37,239 - Error processing JSON to DB: near ",": syntax error
+2024-06-21 17:05:42,398 - Error processing JSON to DB: no such table: nested_data
+2024-06-21 17:05:50,054 - Error processing JSON to DB: near ",": syntax error
+2024-06-21 17:06:09,918 - Error processing JSON to DB: no such table: users
+2024-06-21 17:10:07,746 - Error processing JSON to DB: no such table: users
+2024-06-21 20:53:30,532 - Error processing JSON to DB: no such table: users
