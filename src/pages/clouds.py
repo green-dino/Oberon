@@ -7,6 +7,7 @@ import plotly.express as px
 import plotly.graph_objs as go
 import networkx as nx
 
+
 PROJECT_DIR = Path(__file__).parent
 DB_PATH = Path(__file__).resolve().parent / '..' / 'database.db'
 conn = sqlite3.connect(DB_PATH)
@@ -21,8 +22,6 @@ def create_networkx_graph(relationships_df):
     G = nx.from_pandas_edgelist(relationships_df, 'source_id', 'target_id')
     return G
 
-
-
 def get_documents():
     documents_df = pd.read_sql("SELECT * FROM documents", conn)
     return documents_df
@@ -35,49 +34,7 @@ def get_elements():
     elements_df = pd.read_sql("SELECT * FROM elements", conn)
     return elements_df
 
-def create_networkx_graph(relationships_df):
-    G = nx.from_pandas_edgelist(relationships_df, 'source_id', 'target_id')
-    return G
 
-def visualize_graph(G):
-    pos = nx.spring_layout(G)
-
-    edge_trace = go.Scatter(
-        x=[], y=[], line=dict(width=0.5, color='#888'), hoverinfo='none', mode='lines'
-    )
-
-    for edge in G.edges():
-        x0, y0 = pos[edge[0]]
-        x1, y1 = pos[edge[1]]
-        edge_trace['x'] += [x0, x1, None]
-        edge_trace['y'] += [y0, y1, None]
-
-    node_trace = go.Scatter(
-        x=[], y=[], text=[], mode='markers+text', hoverinfo='text',
-        marker=dict(
-            showscale=True, colorscale='YlGnBu', size=10, color=[],
-            colorbar=dict(
-                thickness=15, title='Node Connections', xanchor='left', titleside='right'
-            ), line_width=2
-        )
-    )
-
-    for node in G.nodes():
-        x, y = pos[node]
-        node_trace['x'] += [x]
-        node_trace['y'] += [y]
-
-    node_trace['text'] = list(G.nodes())
-
-    fig = go.Figure(data=[edge_trace, node_trace],
-                    layout=go.Layout(
-                        title='Network Graph', showlegend=False, hovermode='closest',
-                        margin=dict(b=0, l=0, r=0, t=40),
-                        xaxis=dict(showgrid=False, zeroline=False),
-                        yaxis=dict(showgrid=False, zeroline=False)
-                    ))
-
-    return fig
 
 
 if __name__ == '__main__':
@@ -106,7 +63,7 @@ if __name__ == '__main__':
             elif doc_plot_type == "Line Chart":
                 doc_fig = px.line(documents_df, x=documents_df.columns[0], y=documents_df.columns[1])
             st.plotly_chart(doc_fig)
-    
+
         with col2:
             st.subheader("Relationship Types")
             if not relationship_types_df.empty:
@@ -133,7 +90,7 @@ if __name__ == '__main__':
                 st.download_button("Download Elements as CSV", elements_df.to_csv(index=False), "elements.csv")
 
                 st.subheader("Elements Visualization")
-                elem_plot_type = st.selectbox("Select Plot Type", ["Bar Chart", "Line Chart"], key='elem')
+                elem_plot_type = st.selectbox("Select Plot Type", ["Bar Chart", "Line Chart", "Scatter Chart"], key='elem')
                 if elem_plot_type == "Bar Chart":
                     elem_fig = px.bar(elements_df, x=elements_df.columns[0], y=elements_df.columns[1])
                 elif elem_plot_type == "Line Chart":
