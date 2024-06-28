@@ -2,7 +2,7 @@ import json
 import sqlite3
 
 # Your JSON data
-with open('src/nice.json') as file:
+with open('nice.json') as file:
     data = file.read()
 
 # Parse JSON data
