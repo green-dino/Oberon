@@ -11,6 +11,17 @@ PROJECT_DIR = Path(__file__).parent
 DB_PATH = Path(__file__).resolve().parent / '..' / 'database.db'
 conn = sqlite3.connect(DB_PATH)
 
+def get_data(query):
+    conn = sqlite3.connect(DB_PATH)
+    df = pd.read_sql(query, conn)
+    conn.close()
+    return df
+
+def create_networkx_graph(relationships_df):
+    G = nx.from_pandas_edgelist(relationships_df, 'source_id', 'target_id')
+    return G
+
+
 
 def get_documents():
     documents_df = pd.read_sql("SELECT * FROM documents", conn)
@@ -32,11 +43,7 @@ def visualize_graph(G):
     pos = nx.spring_layout(G)
 
     edge_trace = go.Scatter(
-        x=[],
-        y=[],
-        line=dict(width=0.5, color='#888'),
-        hoverinfo='none',
-        mode='lines'
+        x=[], y=[], line=dict(width=0.5, color='#888'), hoverinfo='none', mode='lines'
     )
 
     for edge in G.edges():
@@ -46,23 +53,14 @@ def visualize_graph(G):
         edge_trace['y'] += [y0, y1, None]
 
     node_trace = go.Scatter(
-        x=[],
-        y=[],
-        text=[],
-        mode='markers+text',
-        hoverinfo='text',
+        x=[], y=[], text=[], mode='markers+text', hoverinfo='text',
         marker=dict(
-            showscale=True,
-            colorscale='YlGnBu',
-            size=10,
-            color=[],
+            showscale=True, colorscale='YlGnBu', size=10, color=[],
             colorbar=dict(
-                thickness=15,
-                title='Node Connections',
-                xanchor='left',
-                titleside='right'
-            ),
-            line_width=2))
+                thickness=15, title='Node Connections', xanchor='left', titleside='right'
+            ), line_width=2
+        )
+    )
 
     for node in G.nodes():
         x, y = pos[node]
@@ -73,14 +71,14 @@ def visualize_graph(G):
 
     fig = go.Figure(data=[edge_trace, node_trace],
                     layout=go.Layout(
-                        title='Network Graph',
-                        showlegend=False,
-                        hovermode='closest',
+                        title='Network Graph', showlegend=False, hovermode='closest',
                         margin=dict(b=0, l=0, r=0, t=40),
                         xaxis=dict(showgrid=False, zeroline=False),
-                        yaxis=dict(showgrid=False, zeroline=False)))
+                        yaxis=dict(showgrid=False, zeroline=False)
+                    ))
 
     return fig
+
 
 if __name__ == '__main__':
    st.set_page_config(layout='wide')
@@ -142,13 +140,11 @@ if __name__ == '__main__':
                     elem_fig = px.line(elements_df, x=elements_df.columns[0], y=elements_df.columns[1])
                 st.plotly_chart(elem_fig)
     
-   st.subheader("Relationships Visualization")
-   if not relationships_df.empty:
-            G = create_networkx_graph(relationships_df)
-            fig = visualize_graph(G)
-            st.plotly_chart(fig)
-
-
+   st.subheader("Visualization:")
+   if not relationship_types_df.empty:
+       G = create_networkx_graph(relationship_types_df)
+       fig = visualize_graph(G)
+       st.plotly_chart(fig)
 
    st.subheader("Documents")
    st.write(documents_df)
