@@ -1,13 +1,12 @@
 import streamlit as st
 
-# Import pages
-from home import home_page
-from analysis import analysis_page
-from clouds import 
+
+import pages.clouds as clouds
+
 
 # Initialize pages
-home = st.Page(home_page, "Home")
-analysis = st.Page(analysis_page, "Analysis")
+#home = st.Page(home, "Home")
+
 clouds = st.Page(clouds, "Data")
 
 # Set up navigation
