@@ -1,1 +1,1 @@
- " Create a Change Control Record and fill in the necessary details. Capture document control information in the Change Control Record. Develop a comprehensive change implementation plan."
+ # " Create a Change Control Record and fill in the necessary details. Capture document control information in the Change Control Record. Develop a comprehensive change implementation plan."

@@ -1,4 +1,4 @@
-CONTROL_GROUPS = {
+ADMIN_GROUPS = {
     "SEC-ARCH": {"Description": "Security Architect", "Email":
 "secarch@example.com"},
     "SYS-ARCH": {"Description": "Systems Architect", "Email":
@@ -29,15 +29,53 @@ CONTROL_GROUPS = {
 "Email": "seccontassessor@example.com"}
 }
 
+CONTROL_GROUPS = { 
+        "F": "Control Short Number",
+        "G": "Description of the Control",
+        "H": "Discussion Questions",
+        "I": "Files / Evidence",
+        "J": "Status",
+        "K": "Priority",
+        "L": "Selected",
+        "M": "Last Updated",
+        "N": "Requirements",
+        "O": "Estimate",
+        "P": "Design",
+        "Q": "Implementation",
+        "R": "Project Timeline",
+        "S": "Start",
+        "T": "End",
+        "U": "Responsible Team",
+        "V": "Team Members",
+        "W": "Maintenance",
+        "X": "Review Date",
+        "Y": "Item ID",
+        "Z": "Exception Required",
+        "AA": "Exception For",
+        "AB": "CSF Group",
+        "AC": "Exception Duration - Start",
+        "AD": "Exception Duration - End",
+        "AE": "Impact to the Process",
+        "AF": "Responsible",
+        "AG": "Accountable",
+        "AH": "Consulted",
+        "AI": "Informed",
+        "AJ": "Visibility",
+        "AK": "Alerting",
+        "AL": "Detection",
+        "AM": "Telemetry",
+        "AN": "Signals",
+        "AO": "Components"
+}
 
-data = {
-    "Phases": {
+PHASES = {
         "A": "Identify",
         "B": "Protect",
         "C": "Detect",
         "D": "Respond",
         "E": "Recover"
-    },
+}
+data = {
     "Control Group": {
         "F": "Control Short Number",
         "G": "Description of the Control",
