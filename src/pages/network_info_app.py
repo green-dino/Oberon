@@ -6,19 +6,19 @@ Network = ipaddress.IPv4Network | ipaddress.IPv6Network
 
 
 def get_valid_input(prompt: str) -> Network:
-    while True:
-        try:
-            # Assign a unique key to each text_input widget
-            network = st.text_input(prompt, key=prompt.replace(" ", "_").lower())  # Example modification
-            if not network:
-                st.warning("Please enter a network address.")
-                continue
-            netobj = ipaddress.ip_network(network, strict=False)
-            return netobj
-        except ValueError as e:
-            st.error(f"Invalid input: {e}. Please enter a valid network address.")
-        except Exception as e:
-            st.error(f"An unexpected error occurred: {e}")
+    # while True:
+    try:
+        # Assign a unique key to each text_input widget
+        network = st.text_input(prompt, key=prompt.replace(" ", "_").lower())  # Example modification
+        if not network:
+            st.warning("Please enter a network address.")
+            # continue
+        netobj = ipaddress.ip_network(network, strict=False)
+        return netobj
+    except ValueError as e:
+        st.error(f"Invalid input: {e}. Please enter a valid network address.")
+    except Exception as e:
+        st.error(f"An unexpected error occurred: {e}")
 
 
 def is_private(address):
