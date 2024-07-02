@@ -4,3 +4,4 @@ bin/
 lib/
 .pytest_cache
 __init__.*
+*.pyc
