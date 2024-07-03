@@ -5,8 +5,10 @@ from textblob import TextBlob
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import csv
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
 
-nlp = spacy.load("en_core_web_sm")
 nltk.download('punkt')
 nltk.download('stopwords')
 
@@ -16,69 +18,100 @@ selected_entities = st.sidebar.multiselect("Select Entity Types", entity_types, 
 visualization_styles = {'dep': 'Dependency Parse', 'ent': 'Entity Recognition'}
 selected_style = st.sidebar.selectbox("Choose Visualization Style", list(visualization_styles.keys()), index=0)
 
-def extract_keywords(text):
-    stop_words = set(stopwords.words('english'))
-    word_tokens = word_tokenize(text)
-    filtered_text = [w for w in word_tokens if not w in stop_words]
-    return filtered_text[:5]
+class TextAnalysisApp:
+    def __init__(self):
+        self.nlp = spacy.load("en_core_web_sm")
+        nltk.download('punkt')
+        nltk.download('stopwords')
+        self.stop_words = set(stopwords.words('english'))
+        self.entity_types = ['PERSON', 'ORG', 'GPE', 'LOC']
+        self.visualization_styles = {'dep': 'Dependency Parse', 'ent': 'Entity Recognition'}
 
-def get_sentiment_score(text):
-    blob = TextBlob(text)
-    return blob.sentiment.polarity
+    def extract_keywords(self, text):
+        word_tokens = word_tokenize(text)
+        filtered_text = [w for w in word_tokens if w not in self.stop_words]
+        return filtered_text[:5]
 
-def main():
-    st.title("Text Analysis Application")
+    def get_sentiment_score(self, text):
+        blob = TextBlob(text)
+        return blob.sentiment.polarity
 
-    st.sidebar.title("Navigation")
-    selection = st.sidebar.radio("Go to", ["Text Analysis"])
+    def display_keyword_frequency(self, keywords):
+        fig, ax = plt.subplots()
+        ax.barh(keywords, [1]*len(keywords), color='skyblue')
+        ax.set_xlabel('Keyword Frequency')
+        ax.set_title('Top 5 Keywords')
+        st.pyplot(fig)
 
-    if selection == "Text Analysis":
-        analysis_page(selected_entities, selected_style)
+    def generate_word_cloud(self, text):
+        wordcloud = WordCloud(width=800, height=400, random_state=21, max_font_size=110).generate(str(text))
+        plt.figure(figsize=(10, 7))
+        plt.imshow(wordcloud, interpolation="bilinear")
+        plt.axis('off')
+        st.pyplot(plt.gcf())
 
-def analysis_page(selected_entities, selected_style):
-    st.header("Text Analysis Page")
-    
-    user_input = st.text_area("Enter text to analyze:", "")
-    
-    if st.button("Analyze"):
-        if user_input:
-            doc = nlp(user_input)
-            
-            # Filter entities based on user selection
-            filtered_ents = [ent for ent in doc.ents if ent.label_ in selected_entities]
-            
-            st.subheader("Named Entities")
-            if filtered_ents:
-                for ent in filtered_ents:
-                    st.write(f"{ent.text} ({ent.label_})")
-            else:
-                st.write("No named entities found.")
-            
-            # Display parts of speech
-            st.subheader("Parts of Speech")
-            pos_data = [(token.text, token.pos_, token.dep_, token.head.text) for token in doc]
-            st.table(pos_data)
-            
-            # Display dependency parse or entity recognition based on user choice
-            if selected_style == 'dep':
-                html = displacy.render(doc, style="dep", jupyter=False)
-                st.write(f"<div style='width: 100%; overflow-x: auto;'>{html}</div>", unsafe_allow_html=True)
-            elif selected_style == 'ent':
-                html = displacy.render(doc, style="ent", jupyter=False)
-                st.write(f"<div style='width: 100%; overflow-x: auto;'>{html}</div>", unsafe_allow_html=True)
-            
-            # Additional text processing features
-            sentiment_score = get_sentiment_score(user_input)
-            st.subheader("Sentiment Score")
-            st.write(f"Sentiment score: {sentiment_score}")
-            
-            keywords = extract_keywords(user_input)
-            st.subheader("Keywords")
-            st.write(f"Top 5 keywords: {', '.join(keywords)}")
+    def display_analysis_results(self, doc, selected_entities, selected_style):
+        # Placeholder for more sophisticated analysis
+        self.generate_word_cloud(doc.text)
+        self.display_keyword_frequency(self.extract_keywords(doc.text))
+
+    def display_entity_distribution(self, ents):
+        labels = [ent.label_ for ent in ents]
+        counts = {label: labels.count(label) for label in labels}
+        fig, ax = plt.subplots()
+        ax.pie(counts.values(), labels=list(counts.keys()), autopct='%1.1f%%')
+        ax.axis('equal')
+        st.pyplot(fig)
+
+    def save_results_to_file(self, results, filename="analysis_results.csv"):
+        with open(filename, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Result Type", "Value"])
+            for result in results:
+                writer.writerow(result)
+
+    def display_analysis_page(self):
+        st.header("Text Analysis Page")
+        
+        uploaded_file = st.file_uploader("Upload a text file to analyze:", type=['txt'])
+        if uploaded_file is not None:
+            text = uploaded_file.getvalue().decode("utf-8")
         else:
-            st.write("Please enter some text to analyze.")
-    else:
-        st.write("Click the Analyze button to start the analysis.")
+            text = st.text_area("Enter text to analyze:", "")
+
+        if st.button("Analyze"):
+            if text:
+                try:
+                    doc = self.nlp(text)
+                    st.subheader("Parts of Speech")
+                    pos_data = [(token.text, token.pos_, token.dep_, token.head.text) for token in doc]
+                    st.table(pos_data)
+                    
+                    if st.session_state.selected_style == 'dep':
+                        html = displacy.render(doc, style="dep", jupyter=False)
+                        st.write(f"<div style='width: 100%; overflow-x: auto;'>{html}</div>", unsafe_allow_html=True)
+                    elif st.session_state.selected_style == 'ent':
+                        html = displacy.render(doc, style="ent", jupyter=False)
+                        st.write(f"<div style='width: 100%; overflow-x: auto;'>{html}</div>", unsafe_allow_html=True)
+                    
+                    if doc.ents:
+                        self.display_entity_distribution(doc.ents)
+                    
+                    self.display_analysis_results(doc, self.entity_types, st.session_state.selected_style)
+                except Exception as e:
+                    st.error(f"An error occurred: {str(e)}")
+            else:
+                st.warning("Please upload a file or enter some text to analyze.")
+        else:
+            st.info("Click the Analyze button to start the analysis.")
+
+    def main(self):
+        st.title("Text Analysis Application")
+        st.sidebar.title("Navigation")
+        selection = st.sidebar.radio("Go to", ["Text Analysis"])
+        if selection == "Text Analysis":
+            self.display_analysis_page()
 
 if __name__ == "__main__":
-    main()
+    app = TextAnalysisApp()
+    app.main()

@@ -10,21 +10,53 @@ def get_db_connection():
 
     return conn
 
+# Function to fetch and display column names from the 'elements' table
+def get_column_names():
+    conn = get_db_connection()
+    if conn:
+        try:
+            with conn:
+                cursor = conn.cursor()
+                cursor.execute("PRAGMA table_info(elements)")
+                columns = [row[1] for row in cursor.fetchall()]
+            return columns
+        except sqlite3.Error as e:
+            st.error(f"Error fetching column names: {e}")
+            return []
+        finally:
+            conn.close()
+    return []
 
+# Function to fetch elements from the database for autocomplete suggestions
+def fetch_elements(column_name):
+    conn = get_db_connection()
+    if conn:
+        try:
+            with conn:
+                cursor = conn.cursor()
+                query = f"SELECT DISTINCT {column_name} FROM elements"
+                cursor.execute(query)
+                elements = [row[0] for row in cursor.fetchall()]
+            return elements
+        except sqlite3.Error as e:
+            st.error(f"Error fetching elements: {e}")
+            return []
+        finally:
+            conn.close()
+    return []
 # Fetch elements from the database for autocomplete suggestions
 
-def fetch_elements(prefix, element_type):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    query = "SELECT * FROM elements LIMIT 1 OFFSET 1"
-    params = (prefix + '%', element_type)
-    cursor.execute(query, params)
-    suggestions = [row[0] for row in cursor.fetchall()]
 
-    conn.close()
-    return suggestions
 
-task_suggestions = fetch_elements('sort')
+st.write("Column Names in 'elements' table:", get_column_names())
+
+# Fetch elements for autocomplete suggestions
+role_suggestions = fetch_elements('element_identifier')
+block_suggestions = fetch_elements('title')
+task_suggestions = fetch_elements('text')
+
+
+# task_suggestions = fetch_elements('sort')
 
 version = st.sidebar.text_input("Version")
 author = st.sidebar.text_input("Author")
@@ -88,9 +120,10 @@ st.sidebar.header("Input Playbook Details")
 
 # Inputs
 play_name = st.sidebar.text_input("Play Name")
-roles = st.sidebar.text_area("Roles (comma separated)").split(',')
-blocks = st.sidebar.text_area("Blocks (comma separated)").split(',')
-tasks = st.sidebar.text_area("Tasks (comma separated)").split(',')
+roles = st.sidebar.multiselect("Roles", options=role_suggestions)
+#roles = st.sidebar.text_area("Roles (comma separated)").split(',')
+blocks = st.sidebar.multiselect("Blocks", options=block_suggestions)
+tasks = st.sidebar.multiselect("Tasks", options=task_suggestions)
 
 if st.sidebar.button("Generate Playbook"):
     roles = [role.strip() for role in roles if role.strip()]
