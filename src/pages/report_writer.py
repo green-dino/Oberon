@@ -46,13 +46,14 @@ st.title("Cybersecurity Incident Reporting")
 # Incident Information Section
 with st.container():
     st.header("Incident Information")
-    incident_id = st.text_input("Enter Incident ID:")
-    source_id = st.text_input("Source ID:")
-    reference = st.text_input("References:")
-    confidence = st.selectbox("Confidence Level:", options=["Low", "Medium", "High"])
-    summary = st.text_area("Incident Summary:")
-    campaign_id = st.text_input("Campaign ID:")
-    notes = st.text_area("Notes:")
+    with st.expander("Incident information"):
+        incident_id = st.text_input("Enter Incident ID:")
+        source_id = st.text_input("Source ID:")
+        reference = st.text_input("References:")
+        confidence = st.selectbox("Confidence Level:", options=["Low", "Medium", "High"])
+        summary = st.text_area("Incident Summary:")
+        campaign_id = st.text_input("Campaign ID:")
+        notes = st.text_area("Notes:")
 
 # Timeline Section
 with st.container():
@@ -96,17 +97,18 @@ with st.container():
 # Victim Information Section
 with st.container():
     st.header("Victim Information")
-    victim_country = st.selectbox("Victim Country:", options=list(victim_country_dict.keys()), key="victim_country")
-    victim_employee_count = st.number_input("Employee Count:", min_value=0, key="victim_employee_count")
-    victim_government = st.selectbox("Government Entity:", options=["Yes", "No"], key="victim_government")
-    victim_industry = st.selectbox("Industry:", options=list(victim_industry_dict.keys()), key="victim_industry")
-    victim_locations_affected = st.text_area("Locations Affected:", key="victim_locations_affected")
-    victim_region = st.selectbox("Region:", options=list(victim_region_dict.keys()), key="victim_region")
-    victim_revenue_amount = st.number_input("Revenue Amount:", min_value=0.0, step=0.1, key="victim_revenue_amount")
-    victim_revenue_iso_currency_code = st.selectbox("Revenue ISO Currency Code:", options=list(victim_revenue_iso_currency_code_dict.keys()), key="victim_revenue_iso_currency_code")
-    victim_secondary_amount = st.number_input("Secondary Amount:", min_value=0.0, step=0.1, key="victim_secondary_amount")
-    victim_state = st.text_input("State:", key="victim_state")
-    victim_victim_id = st.text_input("Victim ID:", key="victim_victim_id")
+    with st.expander("Victim Information"):
+        victim_country = st.selectbox("Victim Country:", options=list(victim_country_dict.keys()), key="victim_country")
+        victim_employee_count = st.number_input("Employee Count:", min_value=0, key="victim_employee_count")
+        victim_government = st.selectbox("Government Entity:", options=["Yes", "No"], key="victim_government")
+        victim_industry = st.selectbox("Industry:", options=list(victim_industry_dict.keys()), key="victim_industry")
+        victim_locations_affected = st.text_area("Locations Affected:", key="victim_locations_affected")
+        victim_region = st.selectbox("Region:", options=list(victim_region_dict.keys()), key="victim_region")
+        victim_revenue_amount = st.number_input("Revenue Amount:", min_value=0.0, step=0.1, key="victim_revenue_amount")
+        victim_revenue_iso_currency_code = st.selectbox("Revenue ISO Currency Code:", options=list(victim_revenue_iso_currency_code_dict.keys()), key="victim_revenue_iso_currency_code")
+        victim_secondary_amount = st.number_input("Secondary Amount:", min_value=0.0, step=0.1, key="victim_secondary_amount")
+        victim_state = st.text_input("State:", key="victim_state")
+        victim_victim_id = st.text_input("Victim ID:", key="victim_victim_id")
 
 # Actor Information Section
 with st.container():
@@ -153,7 +155,7 @@ with st.container():
         action_malware_variety = st.selectbox("Variety:", options=list(action_malware_variety_dict.keys()), key="action_malware_variety")
         action_malware_vector = st.text_input("Vector:", key="action_malware_vector")
 
-# Add other action types similarly...
+# Add other action types 
 
 # Attributes Section
 with st.container():
@@ -174,7 +176,8 @@ with st.container():
 # Discovery and Impact Section
 with st.container():
     st.header("Discovery and Impact")
-    discovery_method_external_variety = st.multiselect("External Discovery Method:", options=list(discovery_method_external_variety_dict.keys()), key="discovery_method_external_variety")
-    discovery_method_internal_variety = st.multiselect("Internal Discovery Method:", options=list(discovery_method_internal_variety_dict.keys()), key="discovery_method_internal_variety")
-    discovery_method_unknown = st.text_input("Unknown Discovery Method:", key="discovery_method_unknown")
-    discovery_notes = st.text_area("Discovery Notes:", key="discovery_notes")
+    with st.expander("Discovery and Impact"):
+        discovery_method_external_variety = st.multiselect("External Discovery Method:", options=list(discovery_method_external_variety_dict.keys()), key="discovery_method_external_variety")
+        discovery_method_internal_variety = st.multiselect("Internal Discovery Method:", options=list(discovery_method_internal_variety_dict.keys()), key="discovery_method_internal_variety")
+        discovery_method_unknown = st.text_input("Unknown Discovery Method:", key="discovery_method_unknown")
+        discovery_notes = st.text_area("Discovery Notes:", key="discovery_notes")

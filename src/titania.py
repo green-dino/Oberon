@@ -1,15 +1,10 @@
 import streamlit as st
-import json
-import pandas as pd
-import matplotlib.pyplot as plt
 
-
-
-# Define the mock method
+# Define mock method
 def mock_method(name):
     st.write(f"Mock method {name} executed.")
 
-# Group methods into categories
+# Define categories and their associated methods
 categories = {
     "Problem Identification": [
         "identify_and_document_problem",
@@ -42,12 +37,9 @@ categories = {
     ],
 }
 
-# Create a single method map
-method_map = {method: mock_method for category in categories.values() for method in category}
-
 class ChangeControlProcess:
     def __init__(self):
-        self.method_map = method_map
+        self.method_map = {method: mock_method for category in categories.values() for method in category}
 
     def execute_mock_method(self, method_name):
         """Executes the mock method associated with the given name."""
@@ -65,21 +57,19 @@ class ChangeControlProcess:
 # Initialize the ChangeControlProcess object
 process = ChangeControlProcess()
 
-st.title("Change Control Process Demo")
+st.title("Change Control Process Dashboard")
 
-# Example usage
-process.identify_and_document_problem()
-
-# Create columns for categories and buttons
+# Organize UI into columns
 num_columns = min(len(categories), 4)
 cols = st.columns(num_columns)
 
+# Display buttons for each category and method
 for col, (category, methods) in zip(cols, categories.items()):
     with col:
         st.header(category)
         for method_name in methods:
-            button_label = method_name.replace("_", " ").title()  # Improve button label readability
+            button_label = method_name.replace("_", " ").title()
             button_key = f"{method_name}_button"
-            st.button(button_label, key=button_key, on_click=lambda method=method_name: process.execute_mock_method(method))
-            st.text("")
+            if st.button(button_label, key=button_key, on_click=lambda method=method_name: process.execute_mock_method(method)):
+                st.write(f"Executing {method_name}...")
 
