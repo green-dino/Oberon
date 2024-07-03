@@ -3,12 +3,8 @@ import sqlite3
 import streamlit as st
 import graphviz as gv
 import json
-
-
-def get_db_connection():
-    db_path = os.path.join(os.path.dirname(__file__), '..', 'database.db')
-    conn = sqlite3.connect(db_path)
-    return conn
+from pyvis.network import Network
+import streamlit.components.v1 as components
 
 # Function to fetch and display column names from the 'elements' table
 def get_column_names():
@@ -26,6 +22,11 @@ def get_column_names():
         finally:
             conn.close()
     return []
+
+def get_db_connection():
+    db_path = os.path.join(os.path.dirname(__file__), '..', 'database.db')
+    conn = sqlite3.connect(db_path)
+    return conn
 
 # Function to fetch rows from the database based on search term in a specific column
 def fetch_elements(search_column, search_term):
@@ -101,6 +102,24 @@ class PlaybookGraphCreator:
     def get_dot(self):
         return self.dot
 
+def create_interactive_graph(play_name, roles, blocks, tasks):
+    net = Network(directed=True)
+    net.add_node(play_name, label=play_name, color='red', size=25)
+    
+    for role in roles:
+        net.add_node(role, label=role, color='blue')
+        net.add_edge(play_name, role)
+    
+    for block in blocks:
+        net.add_node(block, label=block, color='green')
+        net.add_edge(play_name, block)
+    
+    for task in tasks:
+        net.add_node(task, label=task, color='orange')
+        net.add_edge(play_name, task)
+
+    return net
+
 def save_playbook_to_file(playbook_data, version, author, filename="playbook.json"):
     playbook_data.update({"version": version, "author": author})
     try:
@@ -171,6 +190,17 @@ if st.sidebar.button("Generate Playbook"):
         st.header("Playbook Graph")
         creator = PlaybookGraphCreator(play_name, roles, blocks, tasks)
         st.graphviz_chart(creator.get_dot())
+        
+        # Create and render interactive graph
+        st.header("Interactive Playbook Graph")
+        net = create_interactive_graph(play_name, roles, blocks, tasks)
+        
+        # Use write_html to save the graph to an HTML file
+        net.write_html("playbook_graph.html")
+        
+        # Read and display the HTML file
+        with open("playbook_graph.html", "r", encoding="utf-8") as f:
+            components.html(f.read(), height=600)
 
 # Save playbook
 if st.sidebar.button("Save Current Playbook"):
@@ -194,3 +224,5 @@ if st.sidebar.checkbox("Show Raw Inputs"):
     st.write(f"Tasks: {tasks}")
 
 st.write("Column Names in 'elements' table:", get_column_names())
+
+
