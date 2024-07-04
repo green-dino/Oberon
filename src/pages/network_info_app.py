@@ -7,25 +7,25 @@ Network = ipaddress.IPv4Network | ipaddress.IPv6Network
 
 
 def get_valid_input(prompt: str) -> Network:
-    while True:
-        try:
-            # Append a timestamp to the prompt to ensure the key is unique
-            unique_key = f"{prompt.replace(' ', '_').lower()}_at_{time.strftime('%Y%m%d%H%M%S')}"
-            
-            # Ensure unique_key is not empty or None
-            key = unique_key if unique_key.strip() else f"default_key_at_{time.strftime('%Y%m%d%H%M%S')}"
+    # while True:
+    try:
+        # Append a timestamp to the prompt to ensure the key is unique
+        #unique_key = f"{prompt.replace(' ', '_').lower()}_at_{time.strftime('%Y%m%d%H%M%S')}"
+        
+        # Ensure unique_key is not empty or None
+        # key = unique_key if unique_key.strip() else f"default_key_at_{time.strftime('%Y%m%d%H%M%S')}"
 
-            # Assign a unique key to each text_input widget
-            network = st.text_input(prompt, key=key)
-            if not network:
-                st.warning("Please enter a network address.")
-                continue
-            netobj = ipaddress.ip_network(network, strict=False)
-            return netobj
-        except ValueError as e:
-            st.error(f"Invalid input: {e}. Please enter a valid network address.")
-        except Exception as e:
-            st.error(f"An unexpected error occurred: {e}")
+        # Assign a unique key to each text_input widget
+        network = st.text_input(prompt)
+        if not network:
+            st.warning("Please enter a network address.")
+        # continue
+        netobj = ipaddress.ip_network(network, strict=False)
+        return netobj
+    except ValueError as e:
+        st.error(f"Invalid input: {e}. Please enter a valid network address.")
+    except Exception as e:
+        st.error(f"An unexpected error occurred: {e}")
 
 
 def is_private(address):

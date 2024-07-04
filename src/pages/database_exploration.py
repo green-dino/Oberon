@@ -35,8 +35,6 @@ def get_elements():
     return elements_df
 
 
-
-
 if __name__ == '__main__':
    st.set_page_config(layout='wide')
 
