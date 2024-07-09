@@ -6,70 +6,109 @@ import json
 from pyvis.network import Network
 import streamlit.components.v1 as components
 
-# Function to fetch and display column names from the 'elements' table
-def get_column_names():
-    conn = get_db_connection()
-    if conn:
-        try:
-            with conn:
-                cursor = conn.cursor()
-                cursor.execute("PRAGMA table_info(elements)")
-                columns = [row[1] for row in cursor.fetchall()]
-            return columns
-        except sqlite3.Error as e:
-            st.error(f"Error fetching column names: {e}")
-            return []
-        finally:
-            conn.close()
-    return []
-
 def get_db_connection():
+    """
+    Establish a connection to the SQLite database.
+
+    Returns:
+        conn (sqlite3.Connection): Database connection object.
+    """
     db_path = os.path.join(os.path.dirname(__file__), '..', 'database.db')
-    conn = sqlite3.connect(db_path)
+    conn = st.connection('my_database')
     return conn
 
-# Function to fetch rows from the database based on search term in a specific column
+def fetch_query_results(query, params=()):
+    """
+    Execute a SQL query and fetch the results.
+
+    Args:
+        query (str): SQL query to execute.
+        params (tuple): Parameters to pass to the query.
+
+    Returns:
+        results (list): List of fetched rows.
+    """
+    conn = get_db_connection()
+    try:
+        results = conn.query(query)
+        return results
+    except Exception as e:
+        st.error(f"Database error: {e}")
+        return []
+
+
+def get_column_names():
+    """
+    Fetch and display column names from the 'elements' table.
+
+    Returns:
+        columns (list): List of column names.
+    """
+    query = "PRAGMA table_info(elements)"
+    columns = [row[1] for row in fetch_query_results(query)]
+    breakpoint()
+    return columns
+
 def fetch_elements(search_column, search_term):
-    conn = get_db_connection()
-    if conn:
-        try:
-            with conn:
-                cursor = conn.cursor()
-                query = f"""
-                    SELECT element_identifier, element_type, title, text 
-                    FROM elements 
-                    WHERE {search_column} LIKE ?
-                """
-                cursor.execute(query, ('%' + search_term + '%',))
-                elements = cursor.fetchall()
-            return elements
-        except sqlite3.Error as e:
-            st.error(f"Error fetching elements: {e}")
-            return []
-        finally:
-            conn.close()
-    return []
+    """
+    Fetch rows from the database based on search term in a specific column.
 
-# Function to fetch unique suggestions for specific columns
+    Args:
+        search_column (str): Column to search in.
+        search_term (str): Term to search for.
+
+    Returns:
+        elements (list): List of matching elements.
+    """
+    query = f"""
+        SELECT element_identifier, element_type, title, text 
+        FROM elements 
+        WHERE {search_column} LIKE ?
+    """
+    elements = fetch_query_results(query, ('%' + search_term + '%',))
+    return elements
+
 def fetch_suggestions(column_name):
-    conn = get_db_connection()
-    if conn:
-        try:
-            with conn:
-                cursor = conn.cursor()
-                query = f"SELECT DISTINCT {column_name} FROM elements"
-                cursor.execute(query)
-                suggestions = [row[0] for row in cursor.fetchall()]
-            return suggestions
-        except sqlite3.Error as e:
-            st.error(f"Error fetching suggestions from column '{column_name}': {e}")
-            return []
-        finally:
-            conn.close()
-    return []
+    """
+    Fetch unique suggestions for specific columns.
 
-# Utility functions
+    Args:
+        column_name (str): Column to fetch suggestions from.
+
+    Returns:
+        suggestions (list): List of unique suggestions.
+    """
+    query = f"SELECT DISTINCT {column_name} FROM elements"
+    suggestions = [row[0] for row in fetch_query_results(query)]
+    return suggestions
+
+def fetch_elements_by_type(element_type):
+    """
+    Fetch elements by type.
+
+    Args:
+        element_type (str): Type of elements to fetch.
+
+    Returns:
+        elements (list): List of elements of the specified type.
+    """
+    query = "SELECT * FROM elements WHERE element_type = ?"
+    elements = fetch_query_results(query, (element_type,))
+    return elements
+
 def validate_input(play_name, roles, blocks, tasks):
+    """
+    Validate playbook input data.
+
+    Args:
+        play_name (str): Name of the play.
+        roles (list): List of roles.
+        blocks (list): List of blocks.
+        tasks (list): List of tasks.
+
+    Returns:
+        errors (list): List of validation errors.
+    """
     errors = []
     if not play_name:
         errors.append("Play name is required.")
@@ -84,6 +123,9 @@ def validate_input(play_name, roles, blocks, tasks):
     return errors
 
 class PlaybookGraphCreator:
+    """
+    Class to create a playbook graph using Graphviz.
+    """
     def __init__(self, play_name, roles, blocks, tasks):
         self.dot = gv.Digraph()
         with self.dot.subgraph(name='cluster_playbook') as playbook:
@@ -100,9 +142,27 @@ class PlaybookGraphCreator:
                 playbook.edge('Play', f'Task_{task}')
 
     def get_dot(self):
+        """
+        Get the Graphviz dot representation of the playbook graph.
+
+        Returns:
+            dot (graphviz.Digraph): Graphviz dot object.
+        """
         return self.dot
 
 def create_interactive_graph(play_name, roles, blocks, tasks):
+    """
+    Create an interactive graph using Pyvis.
+
+    Args:
+        play_name (str): Name of the play.
+        roles (list): List of roles.
+        blocks (list): List of blocks.
+        tasks (list): List of tasks.
+
+    Returns:
+        net (pyvis.network.Network): Pyvis network object.
+    """
     net = Network(directed=True)
     net.add_node(play_name, label=play_name, color='red', size=25)
     
@@ -121,6 +181,15 @@ def create_interactive_graph(play_name, roles, blocks, tasks):
     return net
 
 def save_playbook_to_file(playbook_data, version, author, filename="playbook.json"):
+    """
+    Save playbook data to a JSON file.
+
+    Args:
+        playbook_data (dict): Playbook data to save.
+        version (str): Version of the playbook.
+        author (str): Author of the playbook.
+        filename (str): Name of the file to save the playbook in.
+    """
     playbook_data.update({"version": version, "author": author})
     try:
         with open(filename, "w") as file:
@@ -130,6 +199,15 @@ def save_playbook_to_file(playbook_data, version, author, filename="playbook.jso
         st.error(f"Error saving playbook: {e}")
 
 def load_playbook_from_file(filename="playbook.json"):
+    """
+    Load playbook data from a JSON file.
+
+    Args:
+        filename (str): Name of the file to load the playbook from.
+
+    Returns:
+        playbook_data (dict): Loaded playbook data.
+    """
     try:
         with open(filename, "r") as file:
             return json.load(file)
@@ -139,90 +217,101 @@ def load_playbook_from_file(filename="playbook.json"):
         st.error(f"Error loading playbook: {e}")
         return {}
 
-# Streamlit app layout
-st.title("Playbook Builder")
+def display_playbook_graph(play_name, roles, blocks, tasks):
+    """
+    Display the playbook graph using Graphviz and Pyvis.
 
-st.sidebar.header("Input Playbook Details")
+    Args:
+        play_name (str): Name of the play.
+        roles (list): List of roles.
+        blocks (list): List of blocks.
+        tasks (list): List of tasks.
+    """
+    st.header("Playbook Graph")
+    creator = PlaybookGraphCreator(play_name, roles, blocks, tasks)
+    st.graphviz_chart(creator.get_dot())
 
-# Fetch suggestions for autocomplete
-role_suggestions = fetch_suggestions('element_identifier')
-block_suggestions = fetch_suggestions('title')
-task_suggestions = fetch_suggestions('text')
+    st.header("Interactive Playbook Graph")
+    net = create_interactive_graph(play_name, roles, blocks, tasks)
+    net.write_html("playbook_graph.html")
 
-version = st.sidebar.text_input("Version")
-author = st.sidebar.text_input("Author")
+    with open("playbook_graph.html", "r", encoding="utf-8") as f:
+        components.html(f.read(), height=600)
 
-# Inputs
-play_name = st.sidebar.text_input("Play Name")
-roles = st.sidebar.multiselect("Roles", options=role_suggestions)
-blocks = st.sidebar.multiselect("Blocks", options=block_suggestions)
-tasks = st.sidebar.multiselect("Tasks", options=task_suggestions)
+def main():
+    """
+    Main function to run the Streamlit app.
+    """
+    st.title("Playbook Builder")
+    st.sidebar.header("Input Playbook Details")
 
-# Search functionality
-search_column = st.sidebar.selectbox("Search Column", options=['element_type'])
-search_term = st.sidebar.text_input("Search Term (e.g., 'task')")
+    role_suggestions = fetch_suggestions('element_identifier')
+    block_suggestions = fetch_suggestions('title')
+    task_suggestions = fetch_suggestions('text')
 
-if st.sidebar.button("Search"):
-    elements = fetch_elements(search_column, search_term)
-    if elements:
-        st.write("Search Results:")
-        for element in elements:
-            st.write({
-                "Element Identifier": element[0],
-                "Element Type": element[1],
-                "Title": element[2],
-                "Text": element[3]
-            })
-    else:
-        st.write("No matching elements found.")
+    version = st.sidebar.text_input("Version")
+    author = st.sidebar.text_input("Author")
 
-if st.sidebar.button("Generate Playbook"):
-    roles = [role.strip() for role in roles if role.strip()]
-    blocks = [block.strip() for block in blocks if block.strip()]
-    tasks = [task.strip() for task in tasks if task.strip()]
+    play_name = st.sidebar.text_input("Play Name")
+    roles = st.sidebar.multiselect("Roles", options=role_suggestions)
+    blocks = st.sidebar.multiselect("Blocks", options=block_suggestions)
+    tasks = st.sidebar.multiselect("Tasks", options=task_suggestions)
 
-    errors = validate_input(play_name, roles, blocks, tasks)
+    search_column = st.sidebar.selectbox("Search Column", options=['element_type'])
+    search_term = st.sidebar.text_input("Search Term (e.g., 'task')")
 
-    if errors:
-        for error in errors:
-            st.sidebar.error(error)
-    else:
-        st.header("Playbook Graph")
-        creator = PlaybookGraphCreator(play_name, roles, blocks, tasks)
-        st.graphviz_chart(creator.get_dot())
-        
-        # Create and render interactive graph
-        st.header("Interactive Playbook Graph")
-        net = create_interactive_graph(play_name, roles, blocks, tasks)
-        
-        # Use write_html to save the graph to an HTML file
-        net.write_html("playbook_graph.html")
-        
-        # Read and display the HTML file
-        with open("playbook_graph.html", "r", encoding="utf-8") as f:
-            components.html(f.read(), height=600)
+    if st.sidebar.button("Search"):
+        elements = fetch_elements(search_column, search_term)
+        if elements:
+            st.write("Search Results:")
+            for element in elements:
+                st.write({
+                    "Element Identifier": element[0],
+                    "Element Type": element[1],
+                    "Title": element[2],
+                    "Text": element[3]
+                })
+        else:
+            st.write("No matching elements found.")
 
-# Save playbook
-if st.sidebar.button("Save Current Playbook"):
-    if 'playbook_data' not in st.session_state:
-        st.session_state.playbook_data = {
-            'play_name': play_name,
-            'roles': roles,
-            'blocks': blocks,
-            'tasks': tasks
-        }
+    element_type = st.sidebar.text_input("Element Type")
+    if st.sidebar.button("Fetch Elements by Type"):
+        elements_by_type = fetch_elements_by_type(element_type)
+        if elements_by_type:
+            st.write("Elements of the specified type:")
+            for element in elements_by_type:
+                st.write(element)
+        else:
+            st.write("No elements found for the specified type.")
 
-    save_playbook_to_file(st.session_state.playbook_data, version, author)
+    if st.sidebar.button("Generate Playbook"):
+        roles = [role.strip() for role in roles if role.strip()]
+        blocks = [block.strip() for block in blocks if block.strip()]
+        tasks = [task.strip() for task in tasks if task.strip()]
 
-# Additional options
-st.sidebar.subheader("Other Options")
-if st.sidebar.checkbox("Show Raw Inputs"):
-    st.subheader("Raw Inputs")
-    st.write(f"Play Name: {play_name}")
-    st.write(f"Roles: {roles}")
-    st.write(f"Blocks: {blocks}")
-    st.write(f"Tasks: {tasks}")
+        errors = validate_input(play_name, roles, blocks, tasks)
+        if errors:
+            st.sidebar.error("\n".join(errors))
+        else:
+            display_playbook_graph(play_name, roles, blocks, tasks)
+            
+            playbook_data = {
+                "play_name": play_name,
+                "roles": roles,
+                "blocks": blocks,
+                "tasks": tasks
+            }
+            save_playbook_to_file(playbook_data, version, author)
+            st.sidebar.success("Playbook generated and saved successfully.")
+    
+    if st.sidebar.button("Load Playbook"):
+        playbook_data = load_playbook_from_file()
+        if playbook_data:
+            st.sidebar.success("Playbook loaded successfully.")
+            st.write("Loaded Playbook Data:")
+            st.write(playbook_data)
+        else:
+            st.sidebar.error("Failed to load playbook.")
 
-st.write("Column Names in 'elements' table:", get_column_names())
-
-
+if __name__ == "__main__":
+    main()

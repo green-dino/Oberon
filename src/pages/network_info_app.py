@@ -1,21 +1,14 @@
 import streamlit as st
 import ipaddress
 import time
+from typing import Union
 
 # Define a type alias for network objects
-Network = ipaddress.IPv4Network | ipaddress.IPv6Network
-
+Network = Union[ipaddress.IPv4Network, ipaddress.IPv6Network]
 
 def get_valid_input(prompt: str) -> Network:
     # while True:
     try:
-        # Append a timestamp to the prompt to ensure the key is unique
-        #unique_key = f"{prompt.replace(' ', '_').lower()}_at_{time.strftime('%Y%m%d%H%M%S')}"
-        
-        # Ensure unique_key is not empty or None
-        # key = unique_key if unique_key.strip() else f"default_key_at_{time.strftime('%Y%m%d%H%M%S')}"
-
-        # Assign a unique key to each text_input widget
         network = st.text_input(prompt)
         if not network:
             st.warning("Please enter a network address.")

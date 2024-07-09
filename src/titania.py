@@ -3,6 +3,7 @@ import pandas as pd
 import altair as alt
 import numpy as np
 
+
 # Define mock method
 def mock_method(name):
     st.write(f"Mock method {name} executed.")
