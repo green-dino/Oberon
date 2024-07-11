@@ -245,6 +245,5 @@ def fetch_and_display_elements_by_type(element_type):
     else:
         st.write("No elements found for the specified type.")
 
-
 if __name__ == "__main__":
     main()
