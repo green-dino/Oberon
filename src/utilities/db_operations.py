@@ -39,6 +39,8 @@ def fetch_query_results(query, params=(), db_name='my_database.db'):
     except Exception as e:
         logging.error(f"Database error: {e}")  # Logging the error
         return pd.DataFrame()
+    
+
 
 def get_column_names():
     """
