@@ -5,96 +5,9 @@ import graphviz as gv
 import json
 from pyvis.network import Network
 import streamlit.components.v1 as components
+import pandas as pd
+from utilities.db_operations import get_db_connection , fetch_query_results , get_column_names , fetch_elements , fetch_suggestions , fetch_elements_by_type
 
-def get_db_connection():
-    """
-    Establish a connection to the SQLite database.
-
-    Returns:
-        conn (sqlite3.Connection): Database connection object.
-    """
-    db_path = os.path.join(os.path.dirname(__file__), '..', 'database.db')
-    conn = st.connection('my_database')
-    return conn
-
-def fetch_query_results(query, params=()):
-    """
-    Execute a SQL query and fetch the results.
-
-    Args:
-        query (str): SQL query to execute.
-        params (tuple): Parameters to pass to the query.
-
-    Returns:
-        results (list): List of fetched rows.
-    """
-    conn = get_db_connection()
-    try:
-        results = conn.query(query)
-        return results
-    except Exception as e:
-        st.error(f"Database error: {e}")
-        return []
-
-
-def get_column_names():
-    """
-    Fetch and display column names from the 'elements' table.
-
-    Returns:
-        columns (list): List of column names.
-    """
-    query = "PRAGMA table_info(elements)"
-    columns = [row[1] for row in fetch_query_results(query)]
-    breakpoint()
-    return columns
-
-def fetch_elements(search_column, search_term):
-    """
-    Fetch rows from the database based on search term in a specific column.
-
-    Args:
-        search_column (str): Column to search in.
-        search_term (str): Term to search for.
-
-    Returns:
-        elements (list): List of matching elements.
-    """
-    query = f"""
-        SELECT element_identifier, element_type, title, text 
-        FROM elements 
-        WHERE {search_column} LIKE ?
-    """
-    elements = fetch_query_results(query, ('%' + search_term + '%',))
-    return elements
-
-def fetch_suggestions(column_name):
-    """
-    Fetch unique suggestions for specific columns.
-
-    Args:
-        column_name (str): Column to fetch suggestions from.
-
-    Returns:
-        suggestions (list): List of unique suggestions.
-    """
-    query = f"SELECT DISTINCT {column_name} FROM elements"
-    suggestions = [row[0] for row in fetch_query_results(query)]
-    return suggestions
-
-def fetch_elements_by_type(element_type):
-    """
-    Fetch elements by type.
-
-    Args:
-        element_type (str): Type of elements to fetch.
-
-    Returns:
-        elements (list): List of elements of the specified type.
-    """
-    query = "SELECT * FROM elements WHERE element_type = ?"
-    elements = fetch_query_results(query, (element_type,))
-    return elements
 
 def validate_input(play_name, roles, blocks, tasks):
     """
@@ -245,7 +158,7 @@ def main():
     st.title("Playbook Builder")
     st.sidebar.header("Input Playbook Details")
 
-    role_suggestions = fetch_suggestions('element_identifier')
+    role_suggestions = fetch_suggestions('element_type')
     block_suggestions = fetch_suggestions('title')
     task_suggestions = fetch_suggestions('text')
 
@@ -261,18 +174,24 @@ def main():
     search_term = st.sidebar.text_input("Search Term (e.g., 'task')")
 
     if st.sidebar.button("Search"):
-        elements = fetch_elements(search_column, search_term)
-        if elements:
-            st.write("Search Results:")
-            for element in elements:
-                st.write({
-                    "Element Identifier": element[0],
-                    "Element Type": element[1],
-                    "Title": element[2],
-                    "Text": element[3]
-                })
-        else:
-            st.write("No matching elements found.")
+        try:
+            elements = fetch_elements(search_column, search_term)
+            if not elements.empty:
+                st.write("Search Results:")
+                for _, element in elements.iterrows():
+                    st.write({
+                        "Element Identifier": element[0],
+                        "Element Type": element[1],
+                        "Title": element[2],
+                        "Text": element[3]
+                    })
+            else:
+                st.write("No matching elements found.")
+        except ValueError as e:
+            st.error(f"An error occurred: {e}")
+        except Exception as e:
+            st.error(f"An unexpected error occurred: {e}")
+
 
     element_type = st.sidebar.text_input("Element Type")
     if st.sidebar.button("Fetch Elements by Type"):
