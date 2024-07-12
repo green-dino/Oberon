@@ -1,0 +1,7 @@
+INFO	: UTC Time: Fri Jul 12 04:44:29 2024: Logging Check
+INFO	: UTC Time: Fri Jul 12 04:44:29 2024: 1.0
+INFO	: UTC Time: Fri Jul 12 04:44:29 2024: Script Started
+DEBUG	: UTC Time: Fri Jul 12 04:44:34 2024: Test Debug
+WARNING	: UTC Time: Fri Jul 12 04:44:34 2024: Test Warning
+CRITICAL	: UTC Time: Fri Jul 12 04:44:34 2024: Test Critical
+INFO	: UTC Time: Fri Jul 12 04:44:34 2024: Script Ended
