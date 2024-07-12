@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 from pathlib import Path
 import sqlite3
-from utilities.db_operations import get_db_connection, fetch_query_results, get_column_names, fetch_elements, fetch_suggestions, fetch_elements_by_type
+from utilities.db_operations import  get_table_names, get_db_connection, fetch_query_results, get_column_names, fetch_elements, fetch_suggestions, fetch_elements_by_type
 
 # Define constants
 PROJECT_DIR = Path(__file__).parent

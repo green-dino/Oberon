@@ -41,6 +41,10 @@ def fetch_query_results(query, params=(), db_name='my_database.db'):
         return pd.DataFrame()
     
 
+def get_table_names(conn):
+    query = "SELECT name FROM sqlite_master WHERE type='table';"
+    tables = pd.read_sql(query, conn)
+    return tables['name'].tolist()
 
 def get_column_names():
     """
