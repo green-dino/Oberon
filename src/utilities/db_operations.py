@@ -101,5 +101,9 @@ def fetch_elements_by_type(element_type):
         elements (pd.DataFrame): DataFrame of elements of the specified type.
     """
     query = "SELECT * FROM elements WHERE element_type = ?"
-    elements = fetch_query_results(query, (element_type,))
-    return elements
+    try:
+        elements = fetch_query_results(query, (element_type,))
+        return elements
+    except sqlite3.ProgrammingError as e:
+        print(f"Error fetching elements by type: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame on error

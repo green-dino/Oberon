@@ -237,13 +237,16 @@ def search_elements(search_column, search_term):
 
 
 def fetch_and_display_elements_by_type(element_type):
-    elements_by_type = fetch_elements_by_type(element_type)
-    if elements_by_type:
-        st.write("Elements of the specified type:")
-        for element in elements_by_type:
-            st.write(element)
-    else:
-        st.write("No elements found for the specified type.")
+    try:
+        elements_by_type = fetch_elements_by_type(element_type)
+        if not elements_by_type.empty:
+            st.write("Elements of the specified type:")
+            for _, element in elements_by_type.iterrows():
+                st.write(element['element'])
+        else:
+            st.write("No elements found for the specified type.")
+    except ValueError as e:
+        st.error(f"An error occurred: {e}")
 
 if __name__ == "__main__":
     main()
