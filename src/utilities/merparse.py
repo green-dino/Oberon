@@ -1,98 +1,83 @@
 import re
+from typing import List, Tuple, Dict, Union
 
 class MermaidParser:
-    @staticmethod
-    def parse_mermaid_input(input_text):
+    def __init__(self) -> None:
+        self.nodes: List[str] = []
+        self.edges: List[Tuple[str, str]] = []
+
+    def parse_mermaid_input(self, input_text: str) -> Dict[str, Union[List[str], List[Tuple[str, str]]]]:
         """
         Parses Mermaid input text and extracts nodes and edges.
         Returns a structured data format (e.g., dictionary) representing the graph.
         """
-        nodes = MermaidParser._extract_nodes(input_text)
-        edges = MermaidParser._extract_edges(input_text)
+        self.nodes = self._extract_nodes(input_text)
+        self.edges = self._extract_edges(input_text)
 
-        parsed_data = {
-            'nodes': nodes,
-            'edges': edges,
-        }
-        return parsed_data
+        return {'nodes': self.nodes, 'edges': self.edges}
 
-    @staticmethod
-    def _extract_nodes(input_text):
+    def _extract_nodes(self, input_text: str) -> List[str]:
         """
         Extracts node declarations from the input text using a regular expression.
         Returns a list of nodes.
         """
         node_pattern = r'(\w+)\s*;'
-        nodes = re.findall(node_pattern, input_text)
-        return nodes
+        return re.findall(node_pattern, input_text)
 
-    @staticmethod
-    def _extract_edges(input_text):
+    def _extract_edges(self, input_text: str) -> List[Tuple[str, str]]:
         """
         Extracts edge connections from the input text using a regular expression.
         Returns a list of tuples representing edges.
         """
         edge_pattern = r'(\w+)\s*-->\s*(\w+)\s*;'
-        edges = re.findall(edge_pattern, input_text)
-        return edges
+        return re.findall(edge_pattern, input_text)
 
-    @staticmethod
-    def prompt_user_nodes(existing_nodes=None):
+    def prompt_user_nodes(self) -> Union[str, None]:
         """
         Prompts the user to enter the nodes.
-        Returns the nodes as a formatted string.
+        Updates the internal nodes list.
         """
-        if existing_nodes is None:
-            existing_nodes = []
-        nodes = existing_nodes.copy()
         print("Enter the nodes (type 'done' when finished, 'back' to go back, 'edit' to modify existing):")
         while True:
             node = input("Node: ")
             if node.lower() == 'done':
                 break
             elif node.lower() == 'back':
-                return 'back', nodes
+                return 'back'
             elif node.lower() == 'edit':
-                nodes = MermaidParser.edit_nodes(nodes)
+                self.edit_nodes()
             elif re.match(r'^\w+$', node):
-                nodes.append(f"{node};")
+                self.nodes.append(f"{node};")
                 print(f"Node '{node}' added.")
             else:
                 print("Invalid node name. Please use alphanumeric characters only.")
-        return '\n'.join(nodes), nodes
 
-    @staticmethod
-    def prompt_user_edges(existing_edges=None):
+    def prompt_user_edges(self) -> Union[str, None]:
         """
         Prompts the user to enter the edges.
-        Returns the edges as a formatted string.
+        Updates the internal edges list.
         """
-        if existing_edges is None:
-            existing_edges = []
-        edges = existing_edges.copy()
         print("Enter the edges in the format 'node1 --> node2' (type 'done' when finished, 'back' to go back, 'edit' to modify existing):")
         while True:
             edge = input("Edge: ")
             if edge.lower() == 'done':
                 break
             elif edge.lower() == 'back':
-                return 'back', edges
+                return 'back'
             elif edge.lower() == 'edit':
-                edges = MermaidParser.edit_edges(edges)
+                self.edit_edges()
             elif re.match(r'^\w+\s*-->\s*\w+$', edge):
-                edges.append(f"{edge};")
+                self.edges.append((edge.split('-->')[0].strip(), edge.split('-->')[1].strip()))
                 print(f"Edge '{edge}' added.")
             else:
                 print("Invalid edge format. Please use the format 'node1 --> node2'.")
-        return '\n'.join(edges), edges
 
-    @staticmethod
-    def edit_nodes(nodes):
+    def edit_nodes(self) -> None:
         """
         Allows the user to edit existing nodes.
         """
         print("Current nodes:")
-        for idx, node in enumerate(nodes):
+        for idx, node in enumerate(self.nodes):
             print(f"{idx + 1}: {node}")
         while True:
             action = input("Enter the number of the node to edit, 'delete <number>' to remove, or 'done' to finish: ")
@@ -102,8 +87,8 @@ class MermaidParser:
                 try:
                     _, num = action.split()
                     num = int(num)
-                    if 1 <= num <= len(nodes):
-                        deleted_node = nodes.pop(num - 1)
+                    if 1 <= num <= len(self.nodes):
+                        deleted_node = self.nodes.pop(num - 1)
                         print(f"Node '{deleted_node}' deleted.")
                     else:
                         print("Invalid number.")
@@ -112,10 +97,10 @@ class MermaidParser:
             else:
                 try:
                     num = int(action)
-                    if 1 <= num <= len(nodes):
+                    if 1 <= num <= len(self.nodes):
                         new_value = input(f"Enter new value for node {num}: ")
                         if re.match(r'^\w+$', new_value):
-                            nodes[num - 1] = f"{new_value};"
+                            self.nodes[num - 1] = f"{new_value};"
                             print(f"Node {num} updated to '{new_value}'.")
                         else:
                             print("Invalid node name. Please use alphanumeric characters only.")
@@ -123,16 +108,14 @@ class MermaidParser:
                         print("Invalid number.")
                 except ValueError:
                     print("Invalid input.")
-        return nodes
 
-    @staticmethod
-    def edit_edges(edges):
+    def edit_edges(self) -> None:
         """
         Allows the user to edit existing edges.
         """
         print("Current edges:")
-        for idx, edge in enumerate(edges):
-            print(f"{idx + 1}: {edge}")
+        for idx, edge in enumerate(self.edges):
+            print(f"{idx + 1}: {edge[0]} --> {edge[1]}")
         while True:
             action = input("Enter the number of the edge to edit, 'delete <number>' to remove, or 'done' to finish: ")
             if action.lower() == 'done':
@@ -141,8 +124,8 @@ class MermaidParser:
                 try:
                     _, num = action.split()
                     num = int(num)
-                    if 1 <= num <= len(edges):
-                        deleted_edge = edges.pop(num - 1)
+                    if 1 <= num <= len(self.edges):
+                        deleted_edge = self.edges.pop(num - 1)
                         print(f"Edge '{deleted_edge}' deleted.")
                     else:
                         print("Invalid number.")
@@ -151,10 +134,10 @@ class MermaidParser:
             else:
                 try:
                     num = int(action)
-                    if 1 <= num <= len(edges):
+                    if 1 <= num <= len(self.edges):
                         new_value = input(f"Enter new value for edge {num}: ")
                         if re.match(r'^\w+\s*-->\s*\w+$', new_value):
-                            edges[num - 1] = f"{new_value};"
+                            self.edges[num - 1] = (new_value.split('-->')[0].strip(), new_value.split('-->')[1].strip())
                             print(f"Edge {num} updated to '{new_value}'.")
                         else:
                             print("Invalid edge format. Please use the format 'node1 --> node2'.")
@@ -162,38 +145,33 @@ class MermaidParser:
                         print("Invalid number.")
                 except ValueError:
                     print("Invalid input.")
-        return edges
 
-    @staticmethod
-    def prompt_user_input():
+    def prompt_user_input(self) -> str:
         """
         Prompts the user to enter nodes and edges separately.
         Returns the combined Mermaid input text.
         """
-        nodes = []
-        edges = []
         while True:
-            nodes_input, nodes = MermaidParser.prompt_user_nodes(nodes)
-            if nodes_input == 'back':
+            if self.prompt_user_nodes() == 'back':
                 continue
 
-            edges_input, edges = MermaidParser.prompt_user_edges(edges)
-            if edges_input == 'back':
+            if self.prompt_user_edges() == 'back':
                 continue
-            
+
             # Preview the graph
             print("\nCurrent Graph:")
-            print(f"Nodes:\n{nodes_input}")
-            print(f"Edges:\n{edges_input}")
-            
+            print(f"Nodes:\n{'; '.join(self.nodes)}")
+            print(f"Edges:\n{'; '.join([f'{edge[0]} --> {edge[1]}' for edge in self.edges])}")
+
             confirm = input("Is this correct? (yes/no): ").lower()
             if confirm == 'yes':
-                return f"{nodes_input}\n{edges_input}"
+                return '; '.join(self.nodes) + '\n' + '; '.join([f'{edge[0]} --> {edge[1]}' for edge in self.edges])
             else:
                 print("Let's edit the graph again.")
 
 # Example usage
 if __name__ == "__main__":
-    user_input = MermaidParser.prompt_user_input()
-    parsed_data = MermaidParser.parse_mermaid_input(user_input)
+    parser = MermaidParser()
+    user_input = parser.prompt_user_input()
+    parsed_data = parser.parse_mermaid_input(user_input)
     print(parsed_data)
