@@ -4,6 +4,68 @@ import seaborn as sns
 import numpy as np
 import math
 from prettytable import PrettyTable
+from utilities.domain_models import GridGeometry2D, Unit
+
+
+# Input fields for GridGeometry2D
+st.header("Create GridGeometry2D")
+rows = st.number_input("Rows", min_value=0, value=1)
+cols = st.number_input("Columns", min_value=0, value=1)
+dx = st.number_input("dx (width of each cell)", min_value=0.0, value=1.0, step=0.1)
+dy = st.number_input("dy (height of each cell)", min_value=0.0, value=1.0, step=0.1)
+
+if st.button("Create Grid"):
+    try:
+        grid = GridGeometry2D(rows, cols, dx, dy)
+        st.success("Grid created successfully!")
+        st.write(grid)
+    except ValueError as e:
+        st.error(e)
+
+# Display grid properties
+if 'grid' in locals():
+    st.subheader("Grid Properties")
+    st.write(f"Total Area: {grid.total_area()}")
+    st.write(f"Perimeter: {grid.perimeter()}")
+    st.write(f"Diagonal Length: {grid.diagonal_length()}")
+
+    # Scale the grid
+    scale_factor = st.number_input("Scale Factor", min_value=0.1, value=1.0, step=0.1)
+    if st.button("Scale Grid"):
+        try:
+            grid.scale(scale_factor)
+            st.success("Grid scaled successfully!")
+            st.write(grid)
+        except ValueError as e:
+            st.error(e)
+
+    # Serialize and deserialize the grid
+    if st.button("Serialize Grid to Dict"):
+        grid_dict = grid.to_dict()
+        st.json(grid_dict)
+
+    grid_json = st.text_area("Grid JSON", value="", height=200)
+    if st.button("Deserialize Grid from Dict"):
+        try:
+            import json
+            grid_data = json.loads(grid_json)
+            deserialized_grid = GridGeometry2D.from_dict(grid_data)
+            st.success("Grid deserialized successfully!")
+            st.write(deserialized_grid)
+        except (json.JSONDecodeError, ValueError) as e:
+            st.error(e)
+
+# Input fields for Unit
+st.header("Create Unit")
+unit_name = st.text_input("Unit Name")
+if st.button("Create Unit"):
+    try:
+        unit = Unit(unit_name)
+        st.success("Unit created successfully!")
+        st.write(unit)
+    except ValueError as e:
+        st.error(e)
+
 
 class RiskAssessment:
     DREAD_RISK_CAP = 54
