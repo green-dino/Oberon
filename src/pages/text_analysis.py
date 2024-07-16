@@ -8,6 +8,8 @@ from nltk.tokenize import word_tokenize
 import csv
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
+import networkx as nx
+import seaborn as sns
 
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -16,7 +18,15 @@ entity_types = ['PERSON', 'ORG', 'GPE', 'LOC']
 selected_entities = st.sidebar.multiselect("Select Entity Types", entity_types, default=entity_types)
 
 visualization_styles = {'dep': 'Dependency Parse', 'ent': 'Entity Recognition'}
-selected_style = st.sidebar.selectbox("Choose Visualization Style", list(visualization_styles.keys()), index=0)
+
+# Initialize session state for selected_style
+if 'selected_style' not in st.session_state:
+    st.session_state.selected_style = list(visualization_styles.keys())[0]
+
+selected_style = st.sidebar.selectbox(
+    "Choose Visualization Style", list(visualization_styles.keys()), index=0,
+    on_change=lambda: setattr(st.session_state, 'selected_style', selected_style)
+)
 
 class TextAnalysisApp:
     def __init__(self):
@@ -51,9 +61,9 @@ class TextAnalysisApp:
         st.pyplot(plt.gcf())
 
     def display_analysis_results(self, doc, selected_entities, selected_style):
-        # Placeholder for more sophisticated analysis
         self.generate_word_cloud(doc.text)
         self.display_keyword_frequency(self.extract_keywords(doc.text))
+        self.display_dependency_graph(doc)
 
     def display_entity_distribution(self, ents):
         labels = [ent.label_ for ent in ents]
@@ -62,6 +72,27 @@ class TextAnalysisApp:
         ax.pie(counts.values(), labels=list(counts.keys()), autopct='%1.1f%%')
         ax.axis('equal')
         st.pyplot(fig)
+
+    def display_dependency_graph(self, doc):
+        edges = []
+        for token in doc:
+            for child in token.children:
+                edges.append(('{0}-{1}'.format(token.lower_, token.i), '{0}-{1}'.format(child.lower_, child.i)))
+
+        graph = nx.Graph(edges)
+        plt.figure(figsize=(12, 8))
+        pos = nx.spring_layout(graph)
+        nx.draw(graph, pos, with_labels=True, node_size=3000, node_color="skyblue", alpha=0.6, edge_color="gray", font_size=10, font_color="black", font_weight="bold")
+        st.pyplot(plt.gcf())
+
+    def display_heatmap(self, doc):
+        tokens = [token.text for token in doc]
+        token_freq = {token: tokens.count(token) for token in tokens}
+        data = list(token_freq.values())
+        heatmap_data = [data[i:i+10] for i in range(0, len(data), 10)]
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(heatmap_data, annot=True, cmap='Blues')
+        st.pyplot(plt.gcf())
 
     def save_results_to_file(self, results, filename="analysis_results.csv"):
         with open(filename, mode='w', newline='') as file:
@@ -98,6 +129,7 @@ class TextAnalysisApp:
                         self.display_entity_distribution(doc.ents)
                     
                     self.display_analysis_results(doc, self.entity_types, st.session_state.selected_style)
+                    self.display_heatmap(doc)
                 except Exception as e:
                     st.error(f"An error occurred: {str(e)}")
             else:

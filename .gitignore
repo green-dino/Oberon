@@ -13,3 +13,4 @@ venv/
 [venv]/lib/python*/site-packages/scipy/*.so
 [venv]/lib/python*/site-packages/h5py/*.so
 [venv]/lib/python*/site-packages/astropy/*.so
+secrets.toml
