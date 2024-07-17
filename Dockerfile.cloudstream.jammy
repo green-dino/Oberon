@@ -1,0 +1,92 @@
+#####
+# CloudStream
+#####
+
+FROM ubuntu:jammy
+
+ENV CLOUDSTREAM_VERSION development
+
+# Update base image and install necessary packages
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && apt-get -y upgrade \
+    && apt-get install -y nano curl x11vnc xvfb xinit git python2 python3 zip xdg-utils firefox python3-tk python3-pexpect fluxbox x11-apps swisswatch man mesa-utils sudo bzip2 net-tools tigervnc-standalone-server tigervnc-common \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up a non-root user account
+ENV CUSER stream
+ENV CUSERPWORD "password.1234"
+
+RUN useradd -ms /bin/bash ${CUSER}
+RUN adduser ${CUSER} sudo
+RUN echo "${CUSER}:${CUSERPWORD}${RANDOM}" | chpasswd
+RUN echo "${CUSER} ALL=NOPASSWD: ALL" >> /etc/sudoers
+
+# Create /tmp/.X11-unix directory with the appropriate permissions
+RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
+
+# Switch to the non-root user and set environment
+USER ${CUSER}
+ENV HOME /home/${CUSER}
+WORKDIR ${HOME}
+
+# Set up VNC and fluxbox configurations
+RUN mkdir -p ~/.vnc ~/.fluxbox/
+RUN echo '/usr/bin/x11vnc -display :1 $SHARESTRING -autoport $APORT -repeat -forever &' > ~/.xinitrc.nopassword
+RUN echo '/usr/bin/x11vnc -usepw -display :1 $SHARESTRING -autoport $APORT -repeat -forever &' > ~/.xinitrc.password
+RUN echo "/usr/bin/startfluxbox" >> ~/.xinitrc.nopassword
+RUN echo "/usr/bin/startfluxbox" >> ~/.xinitrc.password
+RUN bash -c 'echo "xterm &" >> ~/.fluxbox/startup'
+RUN echo "/usr/bin/fluxbox -log ~/.fluxbox/log" >> ~/.fluxbox/startup
+
+# Clone noVNC and websockify repositories
+RUN git clone https://github.com/novnc/noVNC.git /home/${CUSER}/noVNC
+RUN cp /home/${CUSER}/noVNC/vnc.html /home/${CUSER}/noVNC/index.html
+RUN cd /home/${CUSER}/noVNC/utils && git clone https://github.com/novnc/websockify
+
+# Expose Websocket port for VNC server
+ENV APORT 5901
+ENV WPORT 6080
+EXPOSE ${WPORT}
+
+# We can parameterize screen dimensions
+ENV SIZEW 1680
+ENV SIZEH 1050
+ENV CDEPTH 24
+
+# Set up an option to allow for sharing.
+ENV SHARESTRING --noshared
+
+# Ensure environment variables are set
+ENV DISPLAY=:1
+ENV XAUTHLOCALHOSTNAME=localhost
+
+# Install rclone from prebuilt binary
+USER root
+RUN curl -O https://downloads.rclone.org/rclone-current-linux-amd64.zip && unzip -j -d /usr/bin rclone-current-linux-amd64.zip
+USER ${CUSER}
+
+# Copy Files and Set Permissions
+COPY start.sh ${HOME}/
+COPY bootstrap.sh ${HOME}/
+COPY Dockerfile.cloudstream.ubuntu ${HOME}/
+COPY Dockerfile.template ${HOME}/
+COPY README.md ${HOME}/
+COPY COPYRIGHT_CLOUDSTREAM.md ${HOME}/
+COPY RELEASE_NOTES.md ${HOME}/
+COPY QUICKSTART.md ${HOME}/
+
+RUN mv README.md CLOUDSTREAM_README.md
+ADD examples ${HOME}/examples
+
+# Create a version file
+ENV VERSION_FILE VERSION.md
+RUN echo "CloudStream Version: ${CLOUDSTREAM_VERSION} $(date)" > $VERSION_FILE
+
+# Set ownership and finalize
+USER root
+RUN chown -R ${CUSER}:${CUSER} ${HOME}
+USER ${CUSER}
+
+# Run the bootstrap.sh script to start the container
+CMD /home/${CUSER}/bootstrap.sh
