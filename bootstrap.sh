@@ -7,7 +7,6 @@ set -e
 
 trap "echo TRAPed signal" HUP INT QUIT KILL TERM
 
-
 ###
 # If HELP environmental variable is non-empty,
 # cat the README file and exit.
@@ -92,6 +91,11 @@ vncserver -kill :1
 # Remove .x11 lock just in case there is one.
 ###
 sudo rm -rf /tmp/.X1-lock
+
+# Ensure .Xauthority file exists
+if [ ! -f /home/${CUSER}/.Xauthority ]; then
+    touch /home/${CUSER}/.Xauthority
+fi
 
 ###
 # Set up vnc to use a password if USEPASS is non-empty.
