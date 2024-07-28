@@ -27,3 +27,19 @@ class CardOrBackgroundBlock(Block):
         self.num_part_contents = num_part_contents
         self.script_type = script_type
         self.parts = parts
+
+
+class PageTableListBlock(Block):
+    def __init__(self, block_id, num_page_tables, card_block_size, page_tables):
+        size = 24 + len(page_tables) * 6
+        super().__init__(size, 'LIST', block_id, None)
+        self.num_page_tables = num_page_tables
+        self.card_block_size = card_block_size
+        self.page_tables = page_tables
+
+class PageTableBlock(Block):
+    def __init__(self, block_id, card_ids, placeholder):
+        size = 16 + len(card_ids) * 5
+        super().__init__(size, 'PAGE', block_id, None)
+        self.card_ids = card_ids
+        self.placeholder = placeholder
