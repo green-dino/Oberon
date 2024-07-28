@@ -1,4 +1,4 @@
-from ..Blocks import blocks
+from Blocks import blocks
 
 class Stack:
     def __init__(self):
