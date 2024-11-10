@@ -20,24 +20,26 @@ if LOG_OVERWRITE:
 
 try:
     # Initialize the log with level and message format
-    logging.basicConfig(filename=SCRIPT_LOG,
-                        format='%(levelname)s\t: %(message)s',
-                        level=logging.DEBUG)
+    logging.basicConfig(
+        filename=SCRIPT_LOG, format="%(levelname)s\t: %(message)s", level=logging.DEBUG
+    )
 except Exception as e:
     # Handle initialization failure
     print("Failed to initialize Logging:", e)
 
+
 # Function to get current time
 def GetTime(timeStyle="UTC"):
-    if timeStyle == 'UTC':
-        return 'UTC Time: ' + time.asctime(time.gmtime(time.time()))
+    if timeStyle == "UTC":
+        return "UTC Time: " + time.asctime(time.gmtime(time.time()))
     else:
-        return 'LOC Time: ' + time.asctime(time.localtime(time.time()))
+        return "LOC Time: " + time.asctime(time.localtime(time.time()))
+
 
 # Function to log events based on type
 def LogEvent(eventType, eventMessage):
     try:
-        timeStr = GetTime('UTC')  # Get current UTC time
+        timeStr = GetTime("UTC")  # Get current UTC time
         formattedMessage = f"{timeStr}: {eventMessage}"  # Format log message
 
         if eventType == LOG_DEBUG:
@@ -56,6 +58,7 @@ def LogEvent(eventType, eventMessage):
     except Exception as e:
         print("Event Logging Failed:", e)
 
+
 # Example usage of LogEvent function
 if __name__ == "__main__":
     # Print basic script information
@@ -73,11 +76,11 @@ if __name__ == "__main__":
     time.sleep(5)
 
     # Log events during script execution
-    LogEvent(LOG_DEBUG, 'Test Debug')
-    LogEvent(LOG_WARN, 'Test Warning')
-    LogEvent(LOG_CRIT, 'Test Critical')
-    LogEvent(LOG_INFO, 'Script Ended')
+    LogEvent(LOG_DEBUG, "Test Debug")
+    LogEvent(LOG_WARN, "Test Warning")
+    LogEvent(LOG_CRIT, "Test Critical")
+    LogEvent(LOG_INFO, "Script Ended")
 
     # Print script end time
-    utcTime = GetTime('UTC')
+    utcTime = GetTime("UTC")
     print("Script Ended:", utcTime)

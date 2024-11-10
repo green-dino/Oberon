@@ -5,7 +5,10 @@ import networkx as nx
 import seaborn as sns
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 
 class Visualizer:
     def display_keyword_frequency(self, keywords: list):
@@ -18,9 +21,9 @@ class Visualizer:
         logging.info("Displaying keyword frequency")
         try:
             fig, ax = plt.subplots()
-            ax.barh(keywords, [1] * len(keywords), color='skyblue')
-            ax.set_xlabel('Keyword Frequency')
-            ax.set_title('Top 5 Keywords')
+            ax.barh(keywords, [1] * len(keywords), color="skyblue")
+            ax.set_xlabel("Keyword Frequency")
+            ax.set_title("Top 5 Keywords")
             plt.show()
             logging.info("Keyword frequency displayed")
         except Exception as e:
@@ -36,10 +39,12 @@ class Visualizer:
         """
         logging.info("Generating word cloud")
         try:
-            wordcloud = WordCloud(width=800, height=400, random_state=21, max_font_size=110).generate(str(text))
+            wordcloud = WordCloud(
+                width=800, height=400, random_state=21, max_font_size=110
+            ).generate(str(text))
             plt.figure(figsize=(10, 7))
             plt.imshow(wordcloud, interpolation="bilinear")
-            plt.axis('off')
+            plt.axis("off")
             plt.show()
             logging.info("Word cloud generated")
         except Exception as e:
@@ -58,8 +63,8 @@ class Visualizer:
             labels = [ent.label_ for ent in ents]
             counts = {label: labels.count(label) for label in labels}
             fig, ax = plt.subplots()
-            ax.pie(counts.values(), labels=list(counts.keys()), autopct='%1.1f%%')
-            ax.axis('equal')
+            ax.pie(counts.values(), labels=list(counts.keys()), autopct="%1.1f%%")
+            ax.axis("equal")
             plt.show()
             logging.info("Entity distribution displayed")
         except Exception as e:
@@ -78,11 +83,27 @@ class Visualizer:
             edges = []
             for token in doc:
                 for child in token.children:
-                    edges.append(('{0}-{1}'.format(token.lower_, token.i), '{0}-{1}'.format(child.lower_, child.i)))
+                    edges.append(
+                        (
+                            "{0}-{1}".format(token.lower_, token.i),
+                            "{0}-{1}".format(child.lower_, child.i),
+                        )
+                    )
             graph = nx.Graph(edges)
             plt.figure(figsize=(12, 8))
             pos = nx.spring_layout(graph)
-            nx.draw(graph, pos, with_labels=True, node_size=3000, node_color="skyblue", alpha=0.6, edge_color="gray", font_size=10, font_color="black", font_weight="bold")
+            nx.draw(
+                graph,
+                pos,
+                with_labels=True,
+                node_size=3000,
+                node_color="skyblue",
+                alpha=0.6,
+                edge_color="gray",
+                font_size=10,
+                font_color="black",
+                font_weight="bold",
+            )
             plt.show()
             logging.info("Dependency graph displayed")
         except Exception as e:
@@ -101,9 +122,9 @@ class Visualizer:
             tokens = [token.text for token in doc]
             token_freq = {token: tokens.count(token) for token in tokens}
             data = list(token_freq.values())
-            heatmap_data = [data[i:i+10] for i in range(0, len(data), 10)]
+            heatmap_data = [data[i : i + 10] for i in range(0, len(data), 10)]
             plt.figure(figsize=(10, 8))
-            sns.heatmap(heatmap_data, annot=True, cmap='Blues')
+            sns.heatmap(heatmap_data, annot=True, cmap="Blues")
             plt.show()
             logging.info("Heatmap displayed")
         except Exception as e:

@@ -19,8 +19,8 @@ class DataCommunitiesVisualizer:
 
     @staticmethod
     def create_graph_from_df(df, source_col, target_col):
-        df[source_col] = df[source_col].fillna('')
-        df[target_col] = df[target_col].fillna('')
+        df[source_col] = df[source_col].fillna("")
+        df[target_col] = df[target_col].fillna("")
 
         G = nx.Graph()
         for _, row in df.iterrows():
@@ -31,7 +31,9 @@ class DataCommunitiesVisualizer:
     def validate_nodes(G):
         for node in G.nodes:
             if not isinstance(node, (str, int)):
-                raise InvalidNodeTypeException(f"Node {node} has an invalid identifier type.")
+                raise InvalidNodeTypeException(
+                    f"Node {node} has an invalid identifier type."
+                )
 
     @staticmethod
     def setup_pyvis_network(G):
@@ -44,7 +46,7 @@ class DataCommunitiesVisualizer:
         return net
 
     def render_visualization(self, net):
-        net.show_buttons(filter_=['physics'])
+        net.show_buttons(filter_=["physics"])
         net_html = net.generate_html()
         st.components.v1.html(net_html, height=750, scrolling=True)
 
@@ -71,6 +73,7 @@ class DataCommunitiesVisualizer:
                 self.render_visualization(net)
         else:
             st.write("Please upload a CSV file to visualize the data communities.")
+
 
 if __name__ == "__main__":
     visualizer = DataCommunitiesVisualizer()

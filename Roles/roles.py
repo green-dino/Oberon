@@ -6,8 +6,9 @@ class SecurityArchitect:
             "Audit and Accountability": True,
             "Identification and Authentication": True,
             "System and Communications Protection": True,
-            "System and Information Integrity": True
+            "System and Information Integrity": True,
         }
+
 
 class SystemsArchitect:
     def __init__(self):
@@ -16,16 +17,18 @@ class SystemsArchitect:
             "Configuration Management": True,
             "Incident Response": True,
             "System and Communications Protection": True,
-            "System and Information Integrity": True
+            "System and Information Integrity": True,
         }
+
 
 class SoftwareDeveloper:
     def __init__(self):
         self.code = "SOFT-DEV"
         self.responsibilities = {
             "Audit and Accountability": True,
-            "System and Communications Protection": True
+            "System and Communications Protection": True,
         }
+
 
 class DataArchitect:
     def __init__(self):
@@ -34,8 +37,9 @@ class DataArchitect:
             "Configuration Management": True,
             "Incident Response": True,
             "System and Communications Protection": True,
-            "System and Information Integrity": True
+            "System and Information Integrity": True,
         }
+
 
 class EnterpriseArchitect:
     def __init__(self):
@@ -43,8 +47,9 @@ class EnterpriseArchitect:
         self.responsibilities = {
             "Configuration Management": True,
             "Risk Assessment": True,
-            "System and Communications Protection": True
+            "System and Communications Protection": True,
         }
+
 
 class TechnologyArchitect:
     def __init__(self):
@@ -53,16 +58,18 @@ class TechnologyArchitect:
             "Configuration Management": True,
             "Incident Response": True,
             "System and Communications Protection": True,
-            "System and Information Integrity": True
+            "System and Information Integrity": True,
         }
+
 
 class CyberDefenseAnalyst:
     def __init__(self):
         self.code = "CYBER-ANALYST"
         self.responsibilities = {
             "Audit and Accountability": True,
-            "Incident Response": True
+            "Incident Response": True,
         }
+
 
 class CyberDefenseInfrastructureSupport:
     def __init__(self):
@@ -71,8 +78,9 @@ class CyberDefenseInfrastructureSupport:
             "Access Control": True,
             "Incident Response": True,
             "System and Communications Protection": True,
-            "System and Information Integrity": True
+            "System and Information Integrity": True,
         }
+
 
 class DataAnalyst:
     def __init__(self):
@@ -80,8 +88,9 @@ class DataAnalyst:
         self.responsibilities = {
             "Audit and Accountability": True,
             "Incident Response": True,
-            "System and Communications Protection": True
+            "System and Communications Protection": True,
         }
+
 
 class SystemsDeveloper:
     def __init__(self):
@@ -89,8 +98,9 @@ class SystemsDeveloper:
         self.responsibilities = {
             "Audit and Accountability": True,
             "Incident Response": True,
-            "System and Communications Protection": True
+            "System and Communications Protection": True,
         }
+
 
 class NetworkEngineer:
     def __init__(self):
@@ -99,8 +109,9 @@ class NetworkEngineer:
             "Access Control": True,
             "Incident Response": True,
             "System and Communications Protection": True,
-            "System and Information Integrity": True
+            "System and Information Integrity": True,
         }
+
 
 class SystemsAdministrator:
     def __init__(self):
@@ -110,8 +121,9 @@ class SystemsAdministrator:
             "Configuration Management": True,
             "Incident Response": True,
             "System and Communications Protection": True,
-            "System and Information Integrity": True
+            "System and Information Integrity": True,
         }
+
 
 class SecureSoftwareAssessor:
     def __init__(self):
@@ -120,8 +132,9 @@ class SecureSoftwareAssessor:
             "Audit and Accountability": True,
             "Configuration Management": True,
             "Incident Response": True,
-            "System and Communications Protection": True
+            "System and Communications Protection": True,
         }
+
 
 class SecurityControlAssessor:
     def __init__(self):
@@ -131,5 +144,5 @@ class SecurityControlAssessor:
             "Configuration Management": True,
             "Incident Response": True,
             "System and Communications Protection": True,
-            "System and Information Integrity": True
+            "System and Information Integrity": True,
         }

@@ -6,10 +6,7 @@ summary_dict = {}
 campaign_id_dict = {}
 notes_dict = {}
 timeline_compromise_unit_dict = {}
-timeline_containment_unit_dict = {
-    "Seconds": "Seconds",
-    "Minutes": "Minutes"
-}
+timeline_containment_unit_dict = {"Seconds": "Seconds", "Minutes": "Minutes"}
 timeline_discovery_unit_dict = {
     "Seconds": "Seconds",
     "Minutes": "Minutes",
@@ -20,7 +17,7 @@ timeline_discovery_unit_dict = {
     "Years": "Years",
     "Never": "Never",
     "NA": "NA",
-    "Unknown": "Unknown"
+    "Unknown": "Unknown",
 }
 timeline_discovery_value_dict = {}
 timeline_exfiltration_unit_dict = {}
@@ -270,7 +267,7 @@ victim_country_dict = {
     "YT": "Mayotte (France)",
     "ZA": "South Africa",
     "ZM": "Zambia",
-    "ZW": "Zimbabwe"
+    "ZW": "Zimbabwe",
 }
 victim_employee_count_dict = {
     "Small": "Small",
@@ -282,14 +279,14 @@ victim_employee_count_dict = {
     "25001 to 50000": "25001 to 50000",
     "50001 to 100000": "50001 to 100000",
     "Over 100000": "Over 100000",
-    "Unknown": "Unknown"
+    "Unknown": "Unknown",
 }
 victim_government_dict = {
     "Federal": "The highest level of government of the country",
     "Regional": "Government of a subdividion of a country such as aregion, state, province, parish, territory, etc",
     "Local": "The lowest level of government of the country",
     "Unknown": "The level of government was not known.",
-    "NA": "The victim was not part of a government of any level"
+    "NA": "The victim was not part of a government of any level",
 }
 victim_industry_dict = {
     "Information Technology": "IT, technology, and software development",
@@ -304,7 +301,7 @@ victim_industry_dict = {
     "Government and Public Administration": "Government agencies, local authorities, and public services",
     "Education": "Schools, universities, and educational institutions",
     "Professional Services": "Legal, accounting, consulting, engineering, and architecture firms",
-    "Other": "Any industry not listed here"
+    "Other": "Any industry not listed here",
 }
 victim_locations_affected_dict = {}
 victim_region_dict = {}
@@ -556,7 +553,7 @@ actor_external_country_dict = {
     "YT": "Mayotte (France)",
     "ZA": "South Africa",
     "ZM": "Zambia",
-    "ZW": "Zimbabwe"
+    "ZW": "Zimbabwe",
 }
 actor_external_motive_dict = {}
 actor_external_notes_dict = {}
@@ -564,65 +561,65 @@ actor_external_region_dict = {
     "Region": "",
 }
 actor_external_variety_dict = {
-            "Actor disclosure": "Actor disclosure",
-            "Audit": "Security audit or scan",
-            "Customer": "Reported by customer or partner affected by the incident",
-            "Emergency response team": "Emergency response team",
-            "Found documents": "Found documents",
-            "Fraud detection": "Fraud detection (e.g., CPP)",
-            "Incident response": "Notified while investigating another incident",
-            "Law enforcement": "Notified by law enforcement or government agency",
-            "Other": "Discovery method was external and known but not listed including related 3rd parties",
-            "Security researcher": "Security researcher attempting to identify insecure data",
-            "Suspicious traffic": "Report of suspicious traffic",
-            "Unknown": "unknown",
-            "Unrelated 3rd party": "Discovered by person unaffiliated with victim or threat actor"
-        }
+    "Actor disclosure": "Actor disclosure",
+    "Audit": "Security audit or scan",
+    "Customer": "Reported by customer or partner affected by the incident",
+    "Emergency response team": "Emergency response team",
+    "Found documents": "Found documents",
+    "Fraud detection": "Fraud detection (e.g., CPP)",
+    "Incident response": "Notified while investigating another incident",
+    "Law enforcement": "Notified by law enforcement or government agency",
+    "Other": "Discovery method was external and known but not listed including related 3rd parties",
+    "Security researcher": "Security researcher attempting to identify insecure data",
+    "Suspicious traffic": "Report of suspicious traffic",
+    "Unknown": "unknown",
+    "Unrelated 3rd party": "Discovered by person unaffiliated with victim or threat actor",
+}
 actor_internal_job_change_dict = {
-     "Demoted": "Recently demoted or hours reduced",
-                "Hired": "Recently hired",
-                "Job eval": "Recent poor job evaluation",
-                "Lateral move": "Lateral move",
-                "Let go": "Fired, laid off, or let go",
-                "Passed over": "Recently passed over for promotion",
-                "Personal issues": "Personal issues",
-                "Promoted": "Recently promoted",
-                "Reprimanded": "Recently reprimanded",
-                "Resigned": "Preparing to resign or recently resigned",
-                "Other": "Other",
-                "Unknown": "Unknown"
+    "Demoted": "Recently demoted or hours reduced",
+    "Hired": "Recently hired",
+    "Job eval": "Recent poor job evaluation",
+    "Lateral move": "Lateral move",
+    "Let go": "Fired, laid off, or let go",
+    "Passed over": "Recently passed over for promotion",
+    "Personal issues": "Personal issues",
+    "Promoted": "Recently promoted",
+    "Reprimanded": "Recently reprimanded",
+    "Resigned": "Preparing to resign or recently resigned",
+    "Other": "Other",
+    "Unknown": "Unknown",
 }
 actor_internal_motive_dict = {
-                "Convenience": "Convenience of expediency",
-                "Espionage": "Espionage or competitive advantage",
-                "Fear": "Fear or duress",
-                "Financial": "Financial or personal gain",
-                "Fun": "Fun, curiosity, or pride",
-                "Grudge": "Grudge or personal offense",
-                "Ideology": "Ideology or protest",
-                "Secondary": "Aid in a different attack",
-                "NA": "Not Applicable (unintentional action)",
-                "Other": "Other",
-                "Unknown": "Unknown"
+    "Convenience": "Convenience of expediency",
+    "Espionage": "Espionage or competitive advantage",
+    "Fear": "Fear or duress",
+    "Financial": "Financial or personal gain",
+    "Fun": "Fun, curiosity, or pride",
+    "Grudge": "Grudge or personal offense",
+    "Ideology": "Ideology or protest",
+    "Secondary": "Aid in a different attack",
+    "NA": "Not Applicable (unintentional action)",
+    "Other": "Other",
+    "Unknown": "Unknown",
 }
 actor_internal_notes_dict = {}
 actor_internal_variety_dict = {
-                "Auditor": "Auditor",
-                "Call center": "Call center staff",
-                "Cashier": "Cashier, teller, or waiter",
-                "Developer": "Software developer",
-                "End-user": "End-user or regular employee",
-                "Executive": "Senior staff with legal responsibility such as board members and corporate officers",
-                "Finance": "Finance or accounting staff",
-                "Guard": "Security guard",
-                "Helpdesk": "Helpdesk staff",
-                "Human resources": "Human resources staff",
-                "Maintenance": "Maintenance or janitorial staff",
-                "Manager": "Manager or supervisor",
-                "System admin": "System or network administrator",
-                "Doctor or nurse": "A doctor or a nurse",
-                "Other": "Other",
-                "Unknown": "Unknown"
+    "Auditor": "Auditor",
+    "Call center": "Call center staff",
+    "Cashier": "Cashier, teller, or waiter",
+    "Developer": "Software developer",
+    "End-user": "End-user or regular employee",
+    "Executive": "Senior staff with legal responsibility such as board members and corporate officers",
+    "Finance": "Finance or accounting staff",
+    "Guard": "Security guard",
+    "Helpdesk": "Helpdesk staff",
+    "Human resources": "Human resources staff",
+    "Maintenance": "Maintenance or janitorial staff",
+    "Manager": "Manager or supervisor",
+    "System admin": "System or network administrator",
+    "Doctor or nurse": "A doctor or a nurse",
+    "Other": "Other",
+    "Unknown": "Unknown",
 }
 actor_partner_country_dict = {}
 actor_partner_industry_dict = {
@@ -638,7 +635,7 @@ actor_partner_industry_dict = {
     "Government and Public Administration": "Government agencies, local authorities, and public services",
     "Education": "Schools, universities, and educational institutions",
     "Professional Services": "Legal, accounting, consulting, engineering, and architecture firms",
-    "Other": "Any industry not listed here"
+    "Other": "Any industry not listed here",
 }
 actor_partner_motive_dict = {}
 actor_partner_region_dict = {}
@@ -646,41 +643,41 @@ action_error_notes_dict = {}
 action_error_variety_dict = {}
 action_error_vector_dict = {
     "Carelessness": "Carelessness",
-                "Inadequate personnel": "Inadequate or insufficient personnel",
-                "Inadequate processes": "Inadequate or insufficient processes",
-                "Inadequate technology": "Inadequate or insufficient technology resources",
-                "Other": "Other",
-                "Random error": "Random error (no reason, no fault)",
-                "Web application": "Web application"
+    "Inadequate personnel": "Inadequate or insufficient personnel",
+    "Inadequate processes": "Inadequate or insufficient processes",
+    "Inadequate technology": "Inadequate or insufficient technology resources",
+    "Other": "Other",
+    "Random error": "Random error (no reason, no fault)",
+    "Web application": "Web application",
 }
 action_hacking_notes_dict = {}
 action_hacking_variety_dict = {}
 action_hacking_vector_dict = {
-                    "3rd party desktop": "3rd party online desktop desktop sharing (LogMeIn, Go2Assist)",
-                "Backdoor or C2": "Backdoor or command and control channel",
-                "Command shell": "Remote shell",
-                "Desktop sharing": "Graphical desktop sharing (RDP, VNC, PCAnywhere, Citrix)",
-                "Desktop sharing software": "Superset of 'Desktop sharing' and '3rd party desktop'. Please use in place of the other two",
-                "Hypervisor": "Hypervisor break-out attack",
-                "Inter-tenant": "Penetration of another VM or web site on shared device or infrastructure",
-                "Other": "Other",
-                "Partner": "Partner connection or credential",
-                "Physical access": "Physical access or connection (i.e., at keyboard or via cable)",
-                "VPN": "VPN",
-                "Web application": "Web application"
+    "3rd party desktop": "3rd party online desktop desktop sharing (LogMeIn, Go2Assist)",
+    "Backdoor or C2": "Backdoor or command and control channel",
+    "Command shell": "Remote shell",
+    "Desktop sharing": "Graphical desktop sharing (RDP, VNC, PCAnywhere, Citrix)",
+    "Desktop sharing software": "Superset of 'Desktop sharing' and '3rd party desktop'. Please use in place of the other two",
+    "Hypervisor": "Hypervisor break-out attack",
+    "Inter-tenant": "Penetration of another VM or web site on shared device or infrastructure",
+    "Other": "Other",
+    "Partner": "Partner connection or credential",
+    "Physical access": "Physical access or connection (i.e., at keyboard or via cable)",
+    "VPN": "VPN",
+    "Web application": "Web application",
 }
 action_malware_cve_dict = {}
 action_malware_name_dict = {}
 action_malware_notes_dict = {}
 action_malware_result_dict = {
-                 "Infiltrate": "The malware action resulted in additional security access",
-                "Exfiltrate": "The malware action exfiltrated data from the victim",
-                "Elevate": "The malware action resulted in additional security permissions",
-                "Lateral movement": "The malware action used security access or permissions already acuired",
-                "Deploy payload": "e.g. cryptomining, ransomware, etc",
-                "Other": "The result of the malware action is not listed",
-                "Unknown": "The result of the malware action is unknown",
-                "NA": "The malware action did not have a result"
+    "Infiltrate": "The malware action resulted in additional security access",
+    "Exfiltrate": "The malware action exfiltrated data from the victim",
+    "Elevate": "The malware action resulted in additional security permissions",
+    "Lateral movement": "The malware action used security access or permissions already acuired",
+    "Deploy payload": "e.g. cryptomining, ransomware, etc",
+    "Other": "The result of the malware action is not listed",
+    "Unknown": "The result of the malware action is unknown",
+    "NA": "The malware action did not have a result",
 }
 action_malware_variety_dict = {}
 action_malware_vector_dict = {}
@@ -703,20 +700,20 @@ attribute_confidentiality_notes_dict = {}
 attribute_confidentiality_state_dict = {}
 attribute_integrity_variety_dict = {}
 discovery_method_external_variety_dict = {
-            "Actor disclosure": "Actor disclosure",
-            "Audit": "Security audit or scan",
-            "Customer": "Reported by customer or partner affected by the incident",
-            "Emergency response team": "Emergency response team",
-            "Found documents": "Found documents",
-            "Fraud detection": "Fraud detection (e.g., CPP)",
-            "Incident response": "Notified while investigating another incident",
-            "Law enforcement": "Notified by law enforcement or government agency",
-            "Other": "Discovery method was external and known but not listed including related 3rd parties",
-            "Security researcher": "Security researcher attempting to identify insecure data",
-            "Suspicious traffic": "Report of suspicious traffic",
-            "Unknown": "unknown",
-            "Unrelated 3rd party": "Discovered by person unaffiliated with victim or threat actor"
-        }
+    "Actor disclosure": "Actor disclosure",
+    "Audit": "Security audit or scan",
+    "Customer": "Reported by customer or partner affected by the incident",
+    "Emergency response team": "Emergency response team",
+    "Found documents": "Found documents",
+    "Fraud detection": "Fraud detection (e.g., CPP)",
+    "Incident response": "Notified while investigating another incident",
+    "Law enforcement": "Notified by law enforcement or government agency",
+    "Other": "Discovery method was external and known but not listed including related 3rd parties",
+    "Security researcher": "Security researcher attempting to identify insecure data",
+    "Suspicious traffic": "Report of suspicious traffic",
+    "Unknown": "unknown",
+    "Unrelated 3rd party": "Discovered by person unaffiliated with victim or threat actor",
+}
 discovery_method_internal_variety_dict = {
     "Antivirus": "antivirus alert",
     "Break in discovered": "employee discovered evidence of a break in",
@@ -732,7 +729,7 @@ discovery_method_internal_variety_dict = {
     "Other": "Discovery method was internal and known but not listed",
     "Reported by employee": "reported by employee who saw something odd",
     "Security alarm": "physical security system alarm",
-    "Unknown": "unknown"
+    "Unknown": "unknown",
 }
 discovery_method_unknown_dict = {}
 discovery_notes_dict = {}
@@ -783,15 +780,15 @@ plus_updated_at_utc_dict = {}
 plus_version_dict = {}
 value_chain_dict = {
     "Default credentials": "Credentials the system came with",
-            "Email addresses": "Email addresses",
-            "Lost or stolen credentials": "lost or stolen credentials, including credential stuffing, used to pick an organization as a target",
-            "Misconfigurations": "Knowledge of system misconfigurations used to pick an organization as a target",
-            "Partner": "The actor used access to a partner to target the victim.",
-            "Personal Information": "Information on individuals such as title, interests, physical location, etc, used to pick an organization as a target",
-            "Organizational Information": "Information on an organization such as org chart, technologies in use, financial assets, etc, used to pick them as a target",
-            "Vulnerabilities": "Knowledge of software vulnerabilities, both at an organization or associated with a specific vendor's product, used to pick them as a target.",
-            "Weaknesses": "Knowledge of weaknesses other than vulnerability and misconfigurations used to pick an organization as a target",
-            "NA": "No type of targeting was necessary. (This includes targeted.Targeted since the victim was chosen without targeting.",
-            "Other": "The variety of targeting was known, but is not listed",
-            "Unknown": "Nothing is known about the need for or type of targeting investment other than it was present."
+    "Email addresses": "Email addresses",
+    "Lost or stolen credentials": "lost or stolen credentials, including credential stuffing, used to pick an organization as a target",
+    "Misconfigurations": "Knowledge of system misconfigurations used to pick an organization as a target",
+    "Partner": "The actor used access to a partner to target the victim.",
+    "Personal Information": "Information on individuals such as title, interests, physical location, etc, used to pick an organization as a target",
+    "Organizational Information": "Information on an organization such as org chart, technologies in use, financial assets, etc, used to pick them as a target",
+    "Vulnerabilities": "Knowledge of software vulnerabilities, both at an organization or associated with a specific vendor's product, used to pick them as a target.",
+    "Weaknesses": "Knowledge of weaknesses other than vulnerability and misconfigurations used to pick an organization as a target",
+    "NA": "No type of targeting was necessary. (This includes targeted.Targeted since the victim was chosen without targeting.",
+    "Other": "The variety of targeting was known, but is not listed",
+    "Unknown": "Nothing is known about the need for or type of targeting investment other than it was present.",
 }

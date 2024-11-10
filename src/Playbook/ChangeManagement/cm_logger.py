@@ -1,9 +1,10 @@
 import logging
 
-def setup_logger(name, log_file, level=logging.INFO):
-    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 
-    handler = logging.FileHandler(log_file)        
+def setup_logger(name, log_file, level=logging.INFO):
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
+
+    handler = logging.FileHandler(log_file)
     handler.setFormatter(formatter)
 
     logger = logging.getLogger(name)
@@ -12,4 +13,5 @@ def setup_logger(name, log_file, level=logging.INFO):
 
     return logger
 
-main_logger = setup_logger('main_logger', 'change_control.log')
+
+main_logger = setup_logger("main_logger", "change_control.log")

@@ -2,29 +2,31 @@ import streamlit as st
 import requests
 from datetime import datetime, timedelta
 
-API_KEY = 'your_openweathermap_api_key'
-BASE_URL = 'http://api.openweathermap.org/data/2.5/weather'
+API_KEY = "your_openweathermap_api_key"
+BASE_URL = "http://api.openweathermap.org/data/2.5/weather"
 
 st.title("Weather Forecast")
 
 # Get today's date
-today = datetime.now().strftime('%Y-%m-%d')
+today = datetime.now().strftime("%Y-%m-%d")
 
 # Get tomorrow's date
-tomorrow = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
+tomorrow = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+
 
 # Function to fetch weather data
 def get_weather(city_name, date):
     params = {
-        'q': city_name,
-        'appid': API_KEY,
-        'dt': date,
+        "q": city_name,
+        "appid": API_KEY,
+        "dt": date,
     }
     response = requests.get(BASE_URL, params=params)
     if response.status_code == 200:
         return response.json()
     else:
         return None
+
 
 # Input field for city name
 city_name = st.text_input("Enter your city name:")

@@ -8,27 +8,67 @@ st.title("Organizational Improvement Dashboard")
 
 # Mock data for visualization
 data = {
-    "System": ["RootCause", "Trigger", "Event", "Incident", "AvoidAntipatterns", "SpreadRisks", "AdoptDevPractices",
-               "Problem", "Change", "Request", "Loops", "Functions", "Mappings", "Playbooks", "Roles", "Align",
-               "FreshData", "EffectiveAlerts"],
-    "Category": ["Systems Analysis", "Systems Analysis", "Systems Analysis", "Systems Analysis", "Increasing Resilience", 
-                 "Increasing Resilience", "Increasing Resilience", "Trouble Tickets", "Trouble Tickets", "Trouble Tickets", 
-                 "Framework", "Framework", "Framework", "Framework", "Framework", "Reducing Detection Time", 
-                 "Reducing Detection Time", "Reducing Detection Time"],
-    "Metric": [20, 15, 30, 10, 25, 30, 35, 40, 50, 45, 15, 20, 10, 25, 30, 50, 45, 40]
+    "System": [
+        "RootCause",
+        "Trigger",
+        "Event",
+        "Incident",
+        "AvoidAntipatterns",
+        "SpreadRisks",
+        "AdoptDevPractices",
+        "Problem",
+        "Change",
+        "Request",
+        "Loops",
+        "Functions",
+        "Mappings",
+        "Playbooks",
+        "Roles",
+        "Align",
+        "FreshData",
+        "EffectiveAlerts",
+    ],
+    "Category": [
+        "Systems Analysis",
+        "Systems Analysis",
+        "Systems Analysis",
+        "Systems Analysis",
+        "Increasing Resilience",
+        "Increasing Resilience",
+        "Increasing Resilience",
+        "Trouble Tickets",
+        "Trouble Tickets",
+        "Trouble Tickets",
+        "Framework",
+        "Framework",
+        "Framework",
+        "Framework",
+        "Framework",
+        "Reducing Detection Time",
+        "Reducing Detection Time",
+        "Reducing Detection Time",
+    ],
+    "Metric": [20, 15, 30, 10, 25, 30, 35, 40, 50, 45, 15, 20, 10, 25, 30, 50, 45, 40],
 }
 
 df = pd.DataFrame(data)
 
 # Plot the data
-fig = px.bar(df, x="System", y="Metric", color="Category", title="Organizational Improvement Metrics",
-             labels={"Metric": "Metric Value", "System": "Systems"})
+fig = px.bar(
+    df,
+    x="System",
+    y="Metric",
+    color="Category",
+    title="Organizational Improvement Metrics",
+    labels={"Metric": "Metric Value", "System": "Systems"},
+)
 
 st.plotly_chart(fig)
 
 # Mock relationships graph
 st.subheader("System Relationships")
-st.graphviz_chart("""
+st.graphviz_chart(
+    """
     digraph {
         subgraph "cluster_0" {
             label = "Systems Analysis for Organizational Improvement";
@@ -82,21 +122,34 @@ st.graphviz_chart("""
         Event -> Resilience [label="Affected by"];
         Incident -> Resilience [label="Affected by"];
     }
-""")
+"""
+)
 
 # Adding interactive elements for user experience
 st.sidebar.header("Filter Metrics")
-categories = st.sidebar.multiselect("Select Categories", options=df["Category"].unique(), default=df["Category"].unique())
+categories = st.sidebar.multiselect(
+    "Select Categories",
+    options=df["Category"].unique(),
+    default=df["Category"].unique(),
+)
 
 filtered_df = df[df["Category"].isin(categories)]
-fig_filtered = px.bar(filtered_df, x="System", y="Metric", color="Category", title="Filtered Organizational Improvement Metrics",
-                      labels={"Metric": "Metric Value", "System": "Systems"})
+fig_filtered = px.bar(
+    filtered_df,
+    x="System",
+    y="Metric",
+    color="Category",
+    title="Filtered Organizational Improvement Metrics",
+    labels={"Metric": "Metric Value", "System": "Systems"},
+)
 
 st.plotly_chart(fig_filtered)
 
 st.sidebar.header("About")
-st.sidebar.info("""
+st.sidebar.info(
+    """
     This dashboard helps teams visualize and analyze various organizational processes, 
     including systems analysis, resilience improvement, trouble ticket management, 
     framework utilization, and detection time reduction.
-""")
+"""
+)

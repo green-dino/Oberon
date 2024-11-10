@@ -4,12 +4,18 @@ from typing import List, Tuple
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+
 class BMAPBlock:
     """
     A class to handle decompression of bitmap data using various opcodes.
     """
 
-    def __init__(self, bounding_rect: Tuple[int, int, int, int], compressed_data: bytes, mask_data: bytes = None):
+    def __init__(
+        self,
+        bounding_rect: Tuple[int, int, int, int],
+        compressed_data: bytes,
+        mask_data: bytes = None,
+    ):
         """
         Initialize the BMAPBlock with bounding rectangle and compressed data.
         """
@@ -23,29 +29,33 @@ class BMAPBlock:
 
     def decompress(self):
         left, top, right, bottom = self.bounding_rect
-        row_length = ((right - left + 31) // 32) * 32  # Adjust to the nearest multiple of 32
+        row_length = (
+            (right - left + 31) // 32
+        ) * 32  # Adjust to the nearest multiple of 32
 
         i = 0
-        valid_opcodes = set(range(0x00, 0x90)).union(range(0xA0, 0xE0), range(0xE0, 0x100))
-        
+        valid_opcodes = set(range(0x00, 0x90)).union(
+            range(0xA0, 0xE0), range(0xE0, 0x100)
+        )
+
         while i < len(self.compressed_data):
             opcode = self.compressed_data[i]
             i += 1
 
             if opcode not in valid_opcodes:
                 raise ValueError(f"Invalid opcode {opcode} at position {i-1}")
-            
+
             logger.debug(f"Processing opcode {opcode} at index {i-1}")
 
             if 0x00 <= opcode <= 0x7F:
                 z = opcode >> 4
                 d = opcode & 0x0F
                 self.decompressed_data.extend([0] * z)
-                self.decompressed_data.extend(self.compressed_data[i:i + d])
+                self.decompressed_data.extend(self.compressed_data[i : i + d])
                 i += d
 
             elif opcode == 0x80:
-                self.decompressed_data.extend(self.compressed_data[i:i + row_length])
+                self.decompressed_data.extend(self.compressed_data[i : i + row_length])
                 i += row_length
 
             elif opcode == 0x81:
@@ -71,10 +81,14 @@ class BMAPBlock:
                 self.decompressed_data.extend(self.decompressed_data[-row_length:])
 
             elif opcode == 0x86:
-                self.decompressed_data.extend(self.decompressed_data[-2 * row_length:-row_length])
+                self.decompressed_data.extend(
+                    self.decompressed_data[-2 * row_length : -row_length]
+                )
 
             elif opcode == 0x87:
-                self.decompressed_data.extend(self.decompressed_data[-3 * row_length:-2 * row_length])
+                self.decompressed_data.extend(
+                    self.decompressed_data[-3 * row_length : -2 * row_length]
+                )
 
             elif 0x88 <= opcode <= 0x8F:
                 self.update_dh_dv(opcode)
@@ -88,7 +102,7 @@ class BMAPBlock:
 
             elif 0xC0 <= opcode <= 0xDF:
                 d = opcode & 0x1F
-                self.decompressed_data.extend(self.compressed_data[i:i + d * 8])
+                self.decompressed_data.extend(self.compressed_data[i : i + d * 8])
                 i += d * 8
 
             elif 0xE0 <= opcode <= 0xFF:
@@ -97,7 +111,7 @@ class BMAPBlock:
 
             if len(self.decompressed_data) >= row_length * (bottom - top):
                 break
-            
+
             if len(self.decompressed_data) % (row_length * 100) == 0:
                 print(f"Decompressed {len(self.decompressed_data)} bytes so far...")
 
@@ -130,9 +144,9 @@ class BMAPBlock:
             z = opcode >> 4
             d = opcode & 0x0F
             self.decompressed_data.extend([0] * z)
-            self.decompressed_data.extend(self.compressed_data[i:i + d])
+            self.decompressed_data.extend(self.compressed_data[i : i + d])
         elif opcode == 0x80:
-            self.decompressed_data.extend(self.compressed_data[i:i + row_length])
+            self.decompressed_data.extend(self.compressed_data[i : i + row_length])
         elif opcode == 0x81:
             self.decompressed_data.extend([0xFF] * row_length)
         elif opcode == 0x82:
@@ -143,4 +157,3 @@ class BMAPBlock:
             self.prev_rows.append(byte)
             if len(self.prev_rows) > 8:
                 self.prev_rows.pop(0)
-       

@@ -41,10 +41,10 @@ class SystemConfig:
             try:
                 partition_usage = psutil.disk_usage(partition.mountpoint)
                 disk_info[partition.device] = {
-                    'total': partition_usage.total,
-                    'used': partition_usage.used,
-                    'free': partition_usage.free,
-                    'percent': partition_usage.percent
+                    "total": partition_usage.total,
+                    "used": partition_usage.used,
+                    "free": partition_usage.free,
+                    "percent": partition_usage.percent,
                 }
             except PermissionError:
                 continue
@@ -137,15 +137,15 @@ class TestSystemConfig(unittest.TestCase):
         disk_info = SystemConfig.get_disk_info()
         for device, info in disk_info.items():
             self.assertIsInstance(device, str)
-            self.assertIsInstance(info['total'], int)
-            self.assertIsInstance(info['used'], int)
-            self.assertIsInstance(info['free'], int)
-            self.assertIsInstance(info['percent'], float)
-            self.assertGreater(info['total'], 0)
-            self.assertGreater(info['used'], 0)
-            self.assertGreater(info['free'], 0)
-            self.assertGreaterEqual(info['percent'], 0)
-            self.assertLessEqual(info['percent'], 100)
+            self.assertIsInstance(info["total"], int)
+            self.assertIsInstance(info["used"], int)
+            self.assertIsInstance(info["free"], int)
+            self.assertIsInstance(info["percent"], float)
+            self.assertGreater(info["total"], 0)
+            self.assertGreater(info["used"], 0)
+            self.assertGreater(info["free"], 0)
+            self.assertGreaterEqual(info["percent"], 0)
+            self.assertLessEqual(info["percent"], 100)
 
 
 if __name__ == "__main__":
@@ -153,4 +153,4 @@ if __name__ == "__main__":
     SystemConfig.print_config()
 
     # Run unit tests
-    unittest.main(argv=[''], exit=False)
+    unittest.main(argv=[""], exit=False)

@@ -7,7 +7,10 @@ import pandas as pd
 import logging
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 
 def get_db_connection():
     """
@@ -16,11 +19,11 @@ def get_db_connection():
     Returns:
         conn (sqlite3.Connection): Database connection object.
     """
-    conn = st.connection('my_database')
+    conn = st.connection("my_database")
     return conn
 
 
-def fetch_query_results(query, params=(), db_name='my_database.db'):
+def fetch_query_results(query, params=(), db_name="my_database.db"):
     """
     Execute a SQL query and fetch the results.
 
@@ -39,12 +42,13 @@ def fetch_query_results(query, params=(), db_name='my_database.db'):
     except Exception as e:
         logging.error(f"Database error: {e}")  # Logging the error
         return pd.DataFrame()
-    
+
 
 def get_table_names(conn):
     query = "SELECT name FROM sqlite_master WHERE type='table';"
     tables = pd.read_sql(query, conn)
-    return tables['name'].tolist()
+    return tables["name"].tolist()
+
 
 def get_column_names():
     """
@@ -56,6 +60,7 @@ def get_column_names():
     query = "PRAGMA table_info(elements)"
     columns = [row[0] for row in fetch_query_results(query).itertuples(index=False)]
     return columns
+
 
 def fetch_elements(search_column, search_term):
     """
@@ -73,8 +78,9 @@ def fetch_elements(search_column, search_term):
         FROM elements 
         WHERE {search_column} LIKE ?
     """
-    elements = fetch_query_results(query, ('%' + search_term + '%',))
+    elements = fetch_query_results(query, ("%" + search_term + "%",))
     return elements
+
 
 def fetch_suggestions(column_name):
     """
@@ -93,6 +99,7 @@ def fetch_suggestions(column_name):
     else:
         suggestions = []
     return suggestions
+
 
 def fetch_elements_by_type(element_type):
     """

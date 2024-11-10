@@ -6,7 +6,14 @@ import json
 from pyvis.network import Network
 import streamlit.components.v1 as components
 import pandas as pd
-from Utilities.db_operations import get_db_connection, fetch_query_results, get_column_names, fetch_elements, fetch_suggestions, fetch_elements_by_type
+from Utilities.db_operations import (
+    get_db_connection,
+    fetch_query_results,
+    get_column_names,
+    fetch_elements,
+    fetch_suggestions,
+    fetch_elements_by_type,
+)
 
 
 class PlaybookUtils:
@@ -81,20 +88,21 @@ class PlaybookGraphCreator:
     """
     Class to create a playbook graph using Graphviz.
     """
+
     def __init__(self, play_name, roles, blocks, tasks):
         self.dot = gv.Digraph()
-        with self.dot.subgraph(name='cluster_playbook') as playbook:
-            playbook.attr(label='Playbook')
-            playbook.node('Play', play_name)
-            self._add_nodes(playbook, roles, 'Role')
-            self._add_nodes(playbook, blocks, 'Block')
-            self._add_nodes(playbook, tasks, 'Task')
+        with self.dot.subgraph(name="cluster_playbook") as playbook:
+            playbook.attr(label="Playbook")
+            playbook.node("Play", play_name)
+            self._add_nodes(playbook, roles, "Role")
+            self._add_nodes(playbook, blocks, "Block")
+            self._add_nodes(playbook, tasks, "Task")
 
     def _add_nodes(self, playbook, items, prefix):
         for item in items:
-            node_id = f'{prefix}_{item}'
+            node_id = f"{prefix}_{item}"
             playbook.node(node_id, item)
-            playbook.edge('Play', node_id)
+            playbook.edge("Play", node_id)
 
     def get_dot(self):
         """
@@ -122,10 +130,10 @@ class InteractiveGraphCreator:
             net (pyvis.network.Network): Pyvis network object.
         """
         net = Network(directed=True)
-        net.add_node(play_name, label=play_name, color='red', size=25)
-        InteractiveGraphCreator._add_nodes(net, roles, play_name, 'blue')
-        InteractiveGraphCreator._add_nodes(net, blocks, play_name, 'green')
-        InteractiveGraphCreator._add_nodes(net, tasks, play_name, 'orange')
+        net.add_node(play_name, label=play_name, color="red", size=25)
+        InteractiveGraphCreator._add_nodes(net, roles, play_name, "blue")
+        InteractiveGraphCreator._add_nodes(net, blocks, play_name, "green")
+        InteractiveGraphCreator._add_nodes(net, tasks, play_name, "orange")
         return net
 
     @staticmethod
@@ -150,7 +158,9 @@ def display_playbook_graph(play_name, roles, blocks, tasks):
     st.graphviz_chart(creator.get_dot())
 
     st.header("Interactive Playbook Graph")
-    net = InteractiveGraphCreator.create_interactive_graph(play_name, roles, blocks, tasks)
+    net = InteractiveGraphCreator.create_interactive_graph(
+        play_name, roles, blocks, tasks
+    )
     net.write_html("playbook_graph.html")
 
     with open("playbook_graph.html", "r", encoding="utf-8") as f:
@@ -164,9 +174,9 @@ def main():
     st.title("Playbook Builder")
     st.sidebar.header("Input Playbook Details")
 
-    role_suggestions = fetch_suggestions('element_type')
-    block_suggestions = fetch_suggestions('title')
-    task_suggestions = fetch_suggestions('text')
+    role_suggestions = fetch_suggestions("element_type")
+    block_suggestions = fetch_suggestions("title")
+    task_suggestions = fetch_suggestions("text")
 
     version = st.sidebar.text_input("Version")
     author = st.sidebar.text_input("Author")
@@ -176,7 +186,7 @@ def main():
     blocks = st.sidebar.multiselect("Blocks", options=block_suggestions)
     tasks = st.sidebar.multiselect("Tasks", options=task_suggestions)
 
-    search_column = st.sidebar.selectbox("Search Column", options=['element_type'])
+    search_column = st.sidebar.selectbox("Search Column", options=["element_type"])
     search_term = st.sidebar.text_input("Search Term (e.g., 'task')")
 
     if st.sidebar.button("Search"):
@@ -201,7 +211,7 @@ def main():
                 "play_name": play_name,
                 "roles": roles,
                 "blocks": blocks,
-                "tasks": tasks
+                "tasks": tasks,
             }
             PlaybookUtils.save_playbook_to_file(playbook_data, version, author)
             st.sidebar.success("Playbook generated and saved successfully.")
@@ -222,12 +232,14 @@ def search_elements(search_column, search_term):
         if not elements.empty:
             st.write("Search Results:")
             for _, element in elements.iterrows():
-                st.write({
-                    "Element Identifier": element[0],
-                    "Element Type": element[1],
-                    "Title": element[2],
-                    "Text": element[3]
-                })
+                st.write(
+                    {
+                        "Element Identifier": element[0],
+                        "Element Type": element[1],
+                        "Title": element[2],
+                        "Text": element[3],
+                    }
+                )
         else:
             st.write("No matching elements found.")
     except ValueError as e:
@@ -242,11 +254,12 @@ def fetch_and_display_elements_by_type(element_type):
         if not elements_by_type.empty:
             st.write("Elements of the specified type:")
             for _, element in elements_by_type.iterrows():
-                st.write(element['element'])
+                st.write(element["element"])
         else:
             st.write("No elements found for the specified type.")
     except ValueError as e:
         st.error(f"An error occurred: {e}")
+
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,24 @@
 class Part:
-    def __init__(self, length, type_, flags, top, left, bottom, right, more_flags, title_width, icon_id, text_alignment, text_font_id, text_font_size, line_height, text_style_flags, name, script):
+    def __init__(
+        self,
+        length,
+        type_,
+        flags,
+        top,
+        left,
+        bottom,
+        right,
+        more_flags,
+        title_width,
+        icon_id,
+        text_alignment,
+        text_font_id,
+        text_font_size,
+        line_height,
+        text_style_flags,
+        name,
+        script,
+    ):
         self.length = length
         self.type = type_
         self.flags = flags
@@ -18,8 +37,11 @@ class Part:
         self.name = name
         self.script = script
 
+
 class PartContent:
-    def __init__(self, part_id, length, styles_length, styles_data, text_data, name, script):
+    def __init__(
+        self, part_id, length, styles_length, styles_data, text_data, name, script
+    ):
         self.part_id = part_id
         self.length = length
         self.styles_length = styles_length

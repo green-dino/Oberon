@@ -2,7 +2,10 @@ import logging
 from textblob import TextBlob
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 
 class SentimentAnalyzer:
     def get_sentiment_score(self, text: str) -> float:

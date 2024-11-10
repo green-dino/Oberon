@@ -3,10 +3,15 @@ import logging
 from typing import List, Tuple
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 
 class FileHandler:
-    def save_results_to_file(self, results: List[Tuple[str, str]], filename: str = "analysis_results.csv"):
+    def save_results_to_file(
+        self, results: List[Tuple[str, str]], filename: str = "analysis_results.csv"
+    ):
         """
         Saves the analysis results to a CSV file.
 
@@ -16,7 +21,7 @@ class FileHandler:
         """
         logging.info(f"Saving results to file: {filename}")
         try:
-            with open(filename, mode='w', newline='') as file:
+            with open(filename, mode="w", newline="") as file:
                 writer = csv.writer(file)
                 writer.writerow(["Result Type", "Value"])
                 for result in results:

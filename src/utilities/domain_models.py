@@ -4,7 +4,7 @@ class GridGeometry2D:
             raise ValueError("Rows and columns must be non-negative.")
         if dx <= 0 or dy <= 0:
             raise ValueError("dx and dy must be positive.")
-        
+
         self.rows = rows
         self.cols = cols
         self.dx = dx
@@ -36,18 +36,24 @@ class GridGeometry2D:
     @classmethod
     def from_dict(cls, data: dict):
         """Deserializes the object from a dictionary."""
-        return cls(data['rows'], data['cols'], data['dx'], data['dy'])
+        return cls(data["rows"], data["cols"], data["dx"], data["dy"])
 
     def __eq__(self, other) -> bool:
         """Checks equality between two GridGeometry2D objects."""
         if not isinstance(other, GridGeometry2D):
             return NotImplemented
-        return (self.rows == other.rows and self.cols == other.cols and 
-                self.dx == other.dx and self.dy == other.dy)
+        return (
+            self.rows == other.rows
+            and self.cols == other.cols
+            and self.dx == other.dx
+            and self.dy == other.dy
+        )
 
     def __str__(self) -> str:
-        return (f"GridGeometry2D(rows={self.rows}, cols={self.cols}, "
-                f"dx={self.dx}, dy={self.dy})")
+        return (
+            f"GridGeometry2D(rows={self.rows}, cols={self.cols}, "
+            f"dx={self.dx}, dy={self.dy})"
+        )
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -57,6 +63,7 @@ class Unit:
     """
     The unit class is used to represent the units for data values.
     """
+
     def __init__(self, name: str):
         if not name:
             raise ValueError("Unit name cannot be empty.")

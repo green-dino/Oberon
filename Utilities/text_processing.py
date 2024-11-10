@@ -5,7 +5,10 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 
 class TextProcessor:
     def __init__(self):
@@ -18,15 +21,15 @@ class TextProcessor:
         except Exception as e:
             logging.error(f"Failed to load Spacy model: {e}")
             raise
-        
+
         try:
-            nltk.download('punkt')
-            nltk.download('stopwords')
+            nltk.download("punkt")
+            nltk.download("stopwords")
         except Exception as e:
             logging.error(f"Failed to download NLTK resources: {e}")
             raise
 
-        self.stop_words = set(stopwords.words('english'))
+        self.stop_words = set(stopwords.words("english"))
         logging.info("TextProcessor initialized")
 
     def extract_keywords(self, text: str) -> list:
